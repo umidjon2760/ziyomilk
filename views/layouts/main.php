@@ -38,6 +38,7 @@ $this->registerJsFile($publishedRes[1] . '/control_sidebar.js', ['depends' => '\
                 echo $this->render('content', ['content' => $content, 'assetDir' => $assetDir]);
                 echo $this->render('control-sidebar');
                 echo $this->render('footer');
+                //sdsds
             }
             else{
                 echo $this->render('content', ['content' => $content, 'assetDir' => $assetDir]);
