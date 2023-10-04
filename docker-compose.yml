@@ -1,9 +1,33 @@
 version: '2'
 services:
-  php:
-    image: yiisoftware/yii2-php:7.4-apache
+  ziyomilk:
+    container_name: ziyomilk
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+      args:
+        - PROXY=http://172.25.113.50:8085
+      network: host
     volumes:
-      - ~/.composer-docker/cache:/root/.composer/cache:delegated
-      - ./:/app:delegated
+      - .:/var/www
     ports:
-      - '8000:80'
+      - 7080:80
+    networks:
+      - ziyomilk
+  pgsql:
+    container_name: ziyomilk_pgsql
+    image: postgres:14.5-alpine
+    ports:
+      - 5480:5432
+    environment:
+      - POSTGRES_PASSWORD=ziyomilk
+      - POSTGRES_USER=ziyomilk
+      - POSTGRES_DB=ziyomilk
+    volumes:
+      - './data:/var/lib/postgresql/data'
+    networks:
+      - ziyomilk
+networks:
+  ziyomilk:
+    driver: bridge
+

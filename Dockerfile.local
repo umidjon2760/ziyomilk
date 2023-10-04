@@ -1,0 +1,23 @@
+FROM webdevops/php-nginx:7.4
+ARG PROXY
+
+ENV WEB_DOCUMENT_ROOT=/var/www/web
+ENV PHP_DISPLAY_ERRORS=1
+ENV PHP_MEMORY_LIMIT=2048M
+ENV PHP_MAX_EXECUTION_TIME=-1
+ENV PHP_DTRACE=yes
+ENV HTTP_PROXY=${PROXY}
+ENV HTTPS_PROXY=${PROXY}
+ENV NO_PROXY=".hamkorbank.uz,.hamkor.local,172.25.0.0/24,172.25.105.24"
+ENV TZ="Asia/Tashkent"
+
+
+COPY . /var/www/
+
+WORKDIR /var/www/
+
+
+RUN export http_proxy=$PROXY \
+    && export https_proxy=$PROXY \
+    && chmod 777 -R ./web \
+    && chmod 777 -R ./runtime

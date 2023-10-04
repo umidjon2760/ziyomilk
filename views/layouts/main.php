@@ -32,17 +32,15 @@ $this->registerJsFile($publishedRes[1] . '/control_sidebar.js', ['depends' => '\
 
     <div class="wrapper">
         <?php
-            if (!Yii::$app->user->isGuest){
-                echo $this->render('navbar', ['assetDir' => $assetDir]);
-                echo $this->render('sidebar', ['assetDir' => $assetDir]);
-                echo $this->render('content', ['content' => $content, 'assetDir' => $assetDir]);
-                echo $this->render('control-sidebar');
-                echo $this->render('footer');
-                //sdsds
-            }
-            else{
-                echo $this->render('content', ['content' => $content, 'assetDir' => $assetDir]);
-            }
+        if (!Yii::$app->user->isGuest) {
+            echo $this->render('navbar_first', ['assetDir' => $assetDir]);
+            echo $this->render('sidebar', ['assetDir' => $assetDir]);
+            echo $this->render('content', ['content' => $content, 'assetDir' => $assetDir]);
+            echo $this->render('control-sidebar');
+            echo $this->render('footer');
+        } else {
+            return Yii::$app->response->redirect('?r=site/login');
+        }
         ?>
     </div>
 
