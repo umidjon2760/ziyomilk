@@ -14,8 +14,9 @@ class m231005_061736_create_expense_spr_table extends Migration
     {
         $this->createTable('expense_spr', [
             'id' => $this->primaryKey(),
-            'code' => $this->string(50)->notNull(),
+            'code' => $this->string(50)->unique()->notNull(),
             'name' => $this->string(255)->notNull(),
+            'status' => $this->boolean()->defaultValue(true),
             'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime()
         ]);

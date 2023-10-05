@@ -33,10 +33,10 @@ $this->registerJsFile($publishedRes[1] . '/control_sidebar.js', ['depends' => '\
     <div class="wrapper">
         <?php
         if (!Yii::$app->user->isGuest) {
-            echo $this->render('navbar_first', ['assetDir' => $assetDir]);
-            echo $this->render('sidebar', ['assetDir' => $assetDir]);
-            echo $this->render('content', ['content' => $content, 'assetDir' => $assetDir]);
-            echo $this->render('footer');
+            echo $this->render('navbar_milk', ['assetDir' => $assetDir]);
+            echo $this->render('../../../../views/layouts/sidebar', ['assetDir' => $assetDir]);
+            echo $this->render('../../../../views/layouts/content', ['content' => $content, 'assetDir' => $assetDir]);
+            echo $this->render('../../../../views/layouts/footer');
         } else {
             return Yii::$app->response->redirect('?r=site/login');
         }

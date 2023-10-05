@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `days`.
  */
-class m231005_072224_create_days_table extends Migration
+class m231005_052224_create_days_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -14,7 +14,7 @@ class m231005_072224_create_days_table extends Migration
     {
         $this->createTable('days', [
             'id' => $this->primaryKey(),
-            'day' => $this->date(),
+            'day' => $this->date()->unique(),
             'status' => $this->boolean()->defaultValue(false),
             'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime()
