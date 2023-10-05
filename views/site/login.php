@@ -3,9 +3,9 @@
 use yii\helpers\Html;
 ?>
 
-<div class="card" style="width:450px;">
+<div id="card" class="card">
     <div class="card-body login-card-body p-4">
-        <p class="login-box-msg">KIRISH</p>
+        <h3 class="login-box-msg">KIRISH</h3>
 
         <?php $form = \yii\bootstrap4\ActiveForm::begin(['id' => 'login-form']) ?>
 
@@ -38,3 +38,21 @@ use yii\helpers\Html;
     </div>
     <!-- /.login-card-body -->
 </div>
+
+<style>
+    #card {
+        width:400px;
+    }
+
+    body::before {
+        content: "";
+        background-image: linear-gradient(rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.43)), url('files/images/login_back_image.jpeg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+    }
+</style>
