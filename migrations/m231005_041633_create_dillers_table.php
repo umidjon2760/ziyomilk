@@ -3,23 +3,24 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `users`.
+ * Handles the creation of table `dillers`.
  */
-class m231003_180513_create_users_table extends Migration
+class m231005_041633_create_dillers_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('users', [
+        $this->createTable('dillers', [
             'id' => $this->primaryKey(),
-            'username' => $this->string(50)->notNull(),
-            'password' => $this->string(255)->notNull(),
             'name' => $this->string(255)->notNull(),
-            'phone' => $this->integer(9)->notNull(),
             'address' => $this->string(255),
-            'email' => $this->string(255),
+            'phone' => $this->integer(9),
+            'phone2' => $this->integer(9),
+            'tg_address' => $this->string(255),
+            'car_number' => $this->string(10),
+            'photo' => $this->string(255),
             'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime()
         ]);
@@ -30,6 +31,6 @@ class m231003_180513_create_users_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('users');
+        $this->dropTable('dillers');
     }
 }

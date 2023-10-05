@@ -55,6 +55,9 @@ $config = [
         'gridview' =>  [
             'class' => '\kartik\grid\Module'
         ],
+        'milk' => [
+            'class' => 'app\modules\milk\Module',
+        ],
     ],
     'params' => $params,
 ];
