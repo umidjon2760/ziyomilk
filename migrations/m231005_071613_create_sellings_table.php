@@ -19,8 +19,6 @@ class m231005_071613_create_sellings_table extends Migration
             'day' => $this->date(),
             'buy' => $this->float(),
             'return' => $this->float()->defaultValue(0),
-            'given_sum' => $this->float(),
-            'loan_sum' => $this->float(),
             'all_sum' => $this->float(),
             'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime()

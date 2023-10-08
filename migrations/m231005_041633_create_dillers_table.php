@@ -19,6 +19,7 @@ class m231005_041633_create_dillers_table extends Migration
             'phone' => $this->integer(9),
             'phone2' => $this->integer(9),
             'tg_address' => $this->string(255),
+            'car' => $this->string(50),
             'car_number' => $this->string(10),
             'photo' => $this->string(255),
             'created_at' => $this->dateTime(),

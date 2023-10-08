@@ -19,6 +19,7 @@ class m231005_062549_create_expenses_table extends Migration
             'day' => $this->date(),
             'count' => $this->integer(),
             'all_sum' => $this->float(),
+            'given_sum' => $this->float(),
             'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime()
         ]);

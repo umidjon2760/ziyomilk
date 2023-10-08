@@ -31,11 +31,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
 
-            [
-                'attribute' => 'id',
-                'format' => 'raw',
-                'contentOptions' => ['style' => 'width:4%;vertical-align: middle;text-align:center;'],
-            ],
+            // [
+            //     'attribute' => 'id',
+            //     'format' => 'raw',
+            //     'contentOptions' => ['style' => 'width:4%;vertical-align: middle;text-align:center;'],
+            // ],
             [
                 'attribute' => 'code',
                 'format' => 'raw',
@@ -50,6 +50,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'status',
                 'format' => 'raw',
                 'contentOptions' => ['style' => 'width:5%;vertical-align: middle;text-align:center;'],
+                'value' => function($data){
+                    if($data->status){
+                        return 'Aktiv';
+                    }
+                    else{
+                        return 'Noaktiv';
+                    }
+                }
             ],
             [
                 'attribute' => 'created_at',
