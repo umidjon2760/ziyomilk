@@ -24,8 +24,14 @@ use yii\bootstrap4\NavBar;
             [
                 'label' => 'Ma\'lumotlar', 
                 'items' => [
+                    ['label' => 'Kunlar', 'url' => ['/milk/days/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Ishlab chiqarishlar', 'url' => ['/milk/productions/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Dillerlar', 'url' => ['/milk/dillers/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Xarajatlar', 'url' => ['/milk/expenses/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Qarzlar', 'url' => ['/milk/loans/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Kassa', 'url' => ['/milk/kassa/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Investitsiya', 'url' => ['/milk/investment/index'], 'iconStyle' => 'far'],
                     ['label' => 'Barcha maxsulotlar', 'url' => ['/milk/all-products/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Kunlar', 'url' => ['/milk/days/index'], 'iconStyle' => 'far']
                 ],
                 'visible' => true, 
             ],

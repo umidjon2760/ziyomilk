@@ -65,7 +65,7 @@ class Productions extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getDay0()
+    public function getDay()
     {
         return $this->hasOne(Days::class, ['day' => 'day']);
     }
@@ -75,7 +75,7 @@ class Productions extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getProductCode()
+    public function getProduct()
     {
         return $this->hasOne(Products::class, ['code' => 'product_code']);
     }

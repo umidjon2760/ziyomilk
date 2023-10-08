@@ -4,6 +4,7 @@ namespace app\modules\milk\controllers;
 
 use app\modules\milk\models\Days;
 use app\modules\milk\models\DaysSerach;
+use app\modules\milk\models\Productions;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -56,8 +57,9 @@ class DaysController extends Controller
      */
     public function actionView($id)
     {
+        $day = $this->findModel($id);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $day,
         ]);
     }
 
