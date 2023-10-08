@@ -1,16 +1,19 @@
 <?php
 
+use app\modules\milk\models\Days;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var app\modules\milk\models\ProductsSearch $searchModel */
+/** @var app\modules\milk\models\DaysSerach $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Maxsulotlar';
+$this->title = 'Kunlar';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="products-index card">
+<div class="days-index card">
     <div class="card-body">
         <p>
             <?= Html::a('Yangi', ['create'], ['class' => 'btn btn-success']) ?>
@@ -19,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
-            'pjax' => true,
+            'pjax' => false,
             'resizableColumns' => true,
             'showPageSummary' => false,
             'panel' => [
@@ -29,25 +32,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'columns' => [
                 ['class' => 'kartik\grid\SerialColumn'],
 
-                // [
-                //     'attribute' => 'id',
-                //     'format' => 'raw',
-                //     'contentOptions' => ['style' => 'width:4%;vertical-align: middle;text-align:center;'],
-                // ],
+                // 'id',
                 [
-                    'attribute' => 'code',
-                    'format' => 'raw',
-                    'contentOptions' => ['style' => 'width:20%;vertical-align: middle;'],
-                ],
-                [
-                    'attribute' => 'name',
+                    'attribute' => 'day',
                     'format' => 'raw',
                     'contentOptions' => ['style' => 'width:43%;vertical-align: middle;'],
+                    'value' => function ($data) {
+                        return date('d.m.Y', strtotime($data->day));
+                    }
                 ],
                 [
                     'attribute' => 'status',
                     'format' => 'raw',
-                    'contentOptions' => ['style' => 'width:5%;vertical-align: middle;text-align:center;'],
+                    'contentOptions' => ['style' => 'width:10%;vertical-align: middle;text-align:center;'],
                     'value' => function ($data) {
                         if ($data->status) {
                             return 'Aktiv';
@@ -72,9 +69,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         return date('d.m.Y H:i:s', strtotime($data->updated_at));
                     }
                 ],
-                ['class' => 'kartik\grid\ActionColumn'],
+                [
+                    'class' => ActionColumn::class,
+                    'urlCreator' => function ($action, Days $model, $key, $index, $column) {
+                        if($action == 'view'){
+                            return Url::toRoute([$action, 'id' => $model->id]);
+                        }
+                        else{
+                            return '';
+                        }
+                    }
+                ],
             ],
         ]); ?>
-
     </div>
+
 </div>

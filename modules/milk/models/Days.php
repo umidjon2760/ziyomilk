@@ -14,7 +14,9 @@ use Yii;
  * @property string|null $updated_at
  *
  * @property AllProducts[] $allProducts
+ * @property DillersCalc[] $dillersCalcs
  * @property Expenses[] $expenses
+ * @property Loans[] $loans
  * @property Productions[] $productions
  * @property Sellings[] $sellings
  */
@@ -47,10 +49,10 @@ class Days extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'day' => 'Day',
+            'day' => 'Kun',
             'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Yaratilgan vaqt',
+            'updated_at' => 'O\'zgartirilgan vaqt',
         ];
     }
 
@@ -65,6 +67,16 @@ class Days extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[DillersCalcs]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDillersCalcs()
+    {
+        return $this->hasMany(DillersCalc::class, ['day' => 'day']);
+    }
+
+    /**
      * Gets query for [[Expenses]].
      *
      * @return \yii\db\ActiveQuery
@@ -72,6 +84,16 @@ class Days extends \yii\db\ActiveRecord
     public function getExpenses()
     {
         return $this->hasMany(Expenses::class, ['day' => 'day']);
+    }
+
+    /**
+     * Gets query for [[Loans]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLoans()
+    {
+        return $this->hasMany(Loans::class, ['day' => 'day']);
     }
 
     /**

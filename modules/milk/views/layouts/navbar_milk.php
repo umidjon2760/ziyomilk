@@ -24,7 +24,8 @@ use yii\bootstrap4\NavBar;
             [
                 'label' => 'Ma\'lumotlar', 
                 'items' => [
-                    ['label' => 'Barcha maxsulotlar', 'url' => ['/milk/all-products/index'], 'iconStyle' => 'far']
+                    ['label' => 'Barcha maxsulotlar', 'url' => ['/milk/all-products/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Kunlar', 'url' => ['/milk/days/index'], 'iconStyle' => 'far']
                 ],
                 'visible' => true, 
             ],

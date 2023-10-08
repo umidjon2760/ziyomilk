@@ -65,8 +65,8 @@ class ProductsSearch extends Products
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['ilike', 'code', $this->code])
-            ->andFilterWhere(['ilike', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'code', $this->code])
+            ->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }

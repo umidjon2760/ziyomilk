@@ -1,15 +1,15 @@
 <?php
 
-namespace app\models;
+namespace app\modules\milk\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Users;
+use app\modules\milk\models\Days;
 
 /**
- * UsersSearch represents the model behind the search form of `app\models\Users`.
+ * DaysSerach represents the model behind the search form of `app\modules\milk\models\Days`.
  */
-class UsersSearch extends Users
+class DaysSerach extends Days
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class UsersSearch extends Users
     public function rules()
     {
         return [
-            [['id', 'phone'], 'integer'],
-            [['username', 'password', 'name', 'address', 'email', 'created_at', 'updated_at'], 'safe'],
+            [['id', 'status'], 'integer'],
+            [['day', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class UsersSearch extends Users
      */
     public function search($params)
     {
-        $query = Users::find();
+        $query = Days::find();
 
         // add conditions that should always apply here
 
@@ -59,16 +59,11 @@ class UsersSearch extends Users
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'phone' => $this->phone,
+            'day' => $this->day,
+            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
-
-        $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'password', $this->password])
-            ->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'address', $this->address])
-            ->andFilterWhere(['like', 'email', $this->email]);
 
         return $dataProvider;
     }
