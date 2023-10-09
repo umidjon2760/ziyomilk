@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card" id="prductions">
     <div class="card-header">
-        <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;margin-bottom:0px;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+        <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
             <h3 class="card-title" style="color:black;">Ishlab chiqarish</i>
         </button>
     </div>
@@ -86,14 +86,35 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 
-<div class="card collapsed-card" id="dillers">
+<div class="card" id="dillers">
     <div class="card-header">
-        <button type="button" style="width:100%;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+        <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
             <h3 class="card-title" style="color:black;">Dillerlar</i>
         </button>
     </div>
     <div class="card-body">
-        dfdss sfsfsfs fsfsf
+        <?php
+        echo "<table class='table table-bordered  table-hover '>";
+        echo "<tr>";
+        echo "<th style=width:2%;' class='hor-center ver-middle'>#</th>";
+        echo "<th style=width:13%;' class='hor-center ver-middle'>Diller</th>";
+        foreach ($products as $product) {
+            echo "<th class='hor-center ver-middle'>".$product->name."</th>";
+        }
+        echo "</tr>";
+        $n = 1;
+        foreach ($dillers as $diller) {
+            echo "<tr>";
+            echo "<td class='hor-center ver-middle'>".$n."</td>";
+            echo "<td class='ver-middle'>".$diller->name."</td>";
+            foreach ($products as $product) {
+                echo "<td class='hor-center ver-middle'>".$product->name."</td>";
+            }
+            echo "</tr>";
+            $n++;
+        }
+        echo "</table>";
+        ?>
     </div>
 </div>
 <style>

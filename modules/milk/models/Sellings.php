@@ -83,7 +83,7 @@ class Sellings extends \yii\db\ActiveRecord
      */
     public function getDiller()
     {
-        return $this->hasOne(Dillers::class, ['id' => 'diller_id']);
+        return $this->hasOne(Dillers::class, ['id' => 'diller_id'])->where('dillers.status = true');
     }
 
     /**

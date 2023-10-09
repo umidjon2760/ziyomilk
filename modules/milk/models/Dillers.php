@@ -42,6 +42,7 @@ class Dillers extends \yii\db\ActiveRecord
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'address', 'tg_address', 'photo'], 'string', 'max' => 255],
             [['car'], 'string', 'max' => 50],
+            [['status'], 'boolean'],
             [['car_number'], 'string', 'max' => 10],
         ];
     }
@@ -61,6 +62,7 @@ class Dillers extends \yii\db\ActiveRecord
             'car' => 'Car',
             'car_number' => 'Car Number',
             'photo' => 'Photo',
+            'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -73,6 +75,6 @@ class Dillers extends \yii\db\ActiveRecord
      */
     public function getSellings()
     {
-        return $this->hasMany(Sellings::class, ['diller_id' => 'id']);
+        return $this->hasMany(Sellings::class, ['diller_id' => 'id'])->where('dillers.status = true');
     }
 }
