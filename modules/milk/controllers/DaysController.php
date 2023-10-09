@@ -5,6 +5,7 @@ namespace app\modules\milk\controllers;
 use app\modules\milk\models\Days;
 use app\modules\milk\models\DaysSerach;
 use app\modules\milk\models\Productions;
+use app\modules\milk\models\Products;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -58,13 +59,15 @@ class DaysController extends Controller
     public function actionView($id)
     {
         $day = $this->findModel($id);
+        $products = Products::find()->where(['status' => true])->all();
         return $this->render('view', [
             'model' => $day,
+            'products' => $products,
         ]);
     }
 
     /**
-     * Creates a new Days model.
+     * Creates a new Days products.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */

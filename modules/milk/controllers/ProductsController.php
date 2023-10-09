@@ -2,8 +2,11 @@
 
 namespace app\modules\milk\controllers;
 
+use app\modules\milk\models\Days;
+use app\modules\milk\models\Productions;
 use app\modules\milk\models\Products;
 use app\modules\milk\models\ProductsSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -23,9 +26,10 @@ class ProductsController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                        'save-production' => ['POST'],
                     ],
                 ],
             ]
@@ -131,5 +135,37 @@ class ProductsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionSaveProduction(){
+        $product_codes = $_POST['product_code'];
+        $day = Days::getOpenDay();
+        $now = date('Y-m-d H:i:s');
+        foreach ($product_codes as $product_code) {
+            $production = Productions::findOne($_POST['production_id'][$product_code]);
+            $count = $_POST['count'][$product_code];
+            if($production){
+                if($count == 0){
+                    $production->delete();
+                }
+                else{
+                    $production->count = $count;
+                    $production->save(false);
+                }
+            }
+            else{
+                if($count != 0){
+                    $production = new Productions();
+                    $production->product_code = $product_code;
+                    $production->count = $count;
+                    $production->day = $day;
+                    $production->price = $_POST['price'][$product_code];
+                    $production->created_at = $now;
+                    $production->updated_at = $now;
+                    $production->save(false);
+                }
+            }
+        }
+        return $this->redirect(Yii::$app->request->referrer);
     }
 }

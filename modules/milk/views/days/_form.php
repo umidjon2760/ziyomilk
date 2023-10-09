@@ -36,7 +36,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'status')->checkbox(['checked' => $model ? $model->status : true]) ?>
 
-    <?= $form->field($model, 'created_at')->textInput(['value' => ($model->created_at ? $model->created_at : date('Y-m-d H:i:s'))]) ?>
+    <?= $form->field($model, 'created_at')->textInput(['value' => ($model ? $model->created_at : date('Y-m-d H:i:s'))]) ?>
 
     <?= $form->field($model, 'updated_at')->textInput(['value' => date('Y-m-d H:i:s')]) ?>
 

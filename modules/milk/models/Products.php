@@ -3,6 +3,7 @@
 namespace app\modules\milk\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "products".
@@ -73,9 +74,9 @@ class Products extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPrices()
+    public function getPrice()
     {
-        return $this->hasMany(Prices::class, ['product_code' => 'code']);
+        return $this->hasOne(Prices::class, ['product_code' => 'code'])->where(['status' => true]);
     }
 
     /**
@@ -88,6 +89,11 @@ class Products extends \yii\db\ActiveRecord
         return $this->hasMany(Productions::class, ['product_code' => 'code']);
     }
 
+    public function getProduction()
+    {
+        return $this->hasOne(Productions::class, ['product_code' => 'code'])->where(['day' => Days::getOpenDay()]);
+    }
+
     /**
      * Gets query for [[Sellings]].
      *
@@ -96,5 +102,12 @@ class Products extends \yii\db\ActiveRecord
     public function getSellings()
     {
         return $this->hasMany(Sellings::class, ['product_code' => 'code']);
+    }
+
+    public static function getAll()
+    {
+        $model = self::find()->where(['status' => true])->all();
+        $items = ArrayHelper::map($model, 'code', 'name');
+        return $items;
     }
 }
