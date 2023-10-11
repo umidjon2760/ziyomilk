@@ -140,4 +140,46 @@ class DaysController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionGetModal()
+    {
+        $diller_id = $_POST['diller_id'];
+        $products = Products::find()->where(['status' => true])->all();
+        $str = "";
+        $str .= "<table class='table table-bordered'>";
+        $str .= "<tr>";
+        $str .= "<th style=width:3%;' class='hor-center ver-middle'>#</th>";
+        $str .= "<th  class='hor-center ver-middle'>Maxsulot nomi</th>";
+        $str .= "<th style=width:10%;' class='hor-center ver-middle'>Narxi</th>";
+        $str .= "<th style=width:10%;' class='hor-center ver-middle'>Olgan</th>";
+        $str .= "<th style=width:10%;' class='hor-center ver-middle'>Qaytargan</th>";
+        $str .= "<th style=width:10%;' class='hor-center ver-middle'>Jami</th>";
+        $str .= "<th style=width:15%;' class='hor-center ver-middle'>Summa</th>";
+        $str .= "</tr>";
+        $n = 1;
+        foreach ($products as $product) {
+            $str .= "<tr>";
+            $str .= "<td style=width:3%;' class='hor-center ver-middle'>" . $n . "</td>";
+            $str .= "<td  class='hor-center ver-middle'>" . $product->name . "</td>";
+            $str .= "<td style=width:10%;' class='hor-center ver-middle'>" . $product->price->price . "</td>";
+            $str .= "<td style=width:10%;' class='hor-center ver-middle'><input name='buy[]' id='" . $product->code . "_" . $diller_id . "' type='number' step='0.1' min='0' class='form-control'/></td>";
+            $str .= "<td style=width:10%;' class='hor-center ver-middle'><input name='return[]' type='number' step='0.1' min='0' class='form-control'/></td>";
+            $str .= "<td style=width:10%;' class='hor-center ver-middle'></td>";
+            $str .= "<td style=width:15%;' class='hor-center ver-middle'></td>";
+            $str .= "</tr>";
+            $n++;
+        }
+        $str .= "</table>";
+        echo $str;
+        exit;
+    }
+
+    public function actionDillerView($id,$day_id)
+    {
+        $diller = Dillers::findOne($id);
+        return $this->render('diller-view', [
+            'diller' => $diller,
+            'day_id' => $day_id,
+        ]);
+    }
 }

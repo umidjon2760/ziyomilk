@@ -6,6 +6,7 @@ use app\modules\milk\models\Days;
 use app\modules\milk\models\Productions;
 use app\modules\milk\models\Products;
 use app\modules\milk\models\ProductsSearch;
+use app\modules\milk\models\Sellings;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -164,6 +165,41 @@ class ProductsController extends Controller
                     $production->updated_at = $now;
                     $production->save(false);
                 }
+            }
+        }
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    public function actionSaveSellings()
+    {
+        $day = Days::getOpenDay();
+        $now = date('Y-m-d H:i:s');
+        $product_codes = $_POST['product_code'];
+        $diller_id = $_POST['diller_id'];
+        foreach ($product_codes as $product_code) {
+            $selling_id = $_POST['selling_id'][$product_code];
+            $price = $_POST['price'][$product_code];
+            $buy = $_POST['buy'][$product_code];
+            $return = $_POST['return'][$product_code];
+            $all_sum = ($buy - $return) * $price;
+            $selling = Sellings::find()->where(['id' => $selling_id])->one();
+            if($selling){
+                $selling->buy = $buy;
+                $selling->return = $return;
+                $selling->all_sum = $all_sum;
+                $selling->save(false);
+            }
+            else{
+                $selling = new Sellings();
+                $selling->diller_id = $diller_id;
+                $selling->product_code = $product_code;
+                $selling->day = $day;
+                $selling->buy = $buy;
+                $selling->return = $return;
+                $selling->all_sum = $all_sum;
+                $selling->created_at = $now;
+                $selling->updated_at = $now;
+                $selling->save(false);
             }
         }
         return $this->redirect(Yii::$app->request->referrer);

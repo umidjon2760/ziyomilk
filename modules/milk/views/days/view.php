@@ -21,9 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="card-body">
         <?php
         $productions = $model->productions;
-        // debug($productions);
         Modal::begin([
-            'title' => '<h2>Ishlab chiqarish ('.$this->title.')</h2>',
+            'title' => '<h2>Ishlab chiqarish (' . $this->title . ')</h2>',
             'id' => 'your-modal-production',
             'size' => 'modal-lg'
         ]);
@@ -41,13 +40,13 @@ $this->params['breadcrumbs'][] = $this->title;
             $production_value = $production_model ? $production_model->count : 0;
             $production_id = $production_model ? $production_model->id : 0;
             echo "<input type='hidden' name='product_code[]' value='" . $product->code . "' />";
-            echo "<input type='hidden' name='price[".$product->code."]' value='" . $product->price->price . "' />";
-            echo "<input type='hidden' name='production_id[".$product->code."]' value='" . $production_id . "' />";
+            echo "<input type='hidden' name='price[" . $product->code . "]' value='" . $product->price->price . "' />";
+            echo "<input type='hidden' name='production_id[" . $product->code . "]' value='" . $production_id . "' />";
             echo "<tr>";
             echo "<td class='hor-center ver-middle'>" . $t . "</td>";
             echo "<td class='ver-middle'>" . $product->name . "</td>";
             echo "<td class='hor-center ver-middle'>" . number_format($product->price->price, 0, ',', ' ') . "</td>";
-            echo "<td class='hor-center ver-middle'><input type='number'name='count[".$product->code."]' step='0.1' min='0' class='form-control' value='".$production_value."' /></td>";
+            echo "<td class='hor-center ver-middle'><input type='number'name='count[" . $product->code . "]' step='0.1' min='0' class='form-control' value='" . $production_value . "' /></td>";
             echo "</tr>";
             $t++;
         }
@@ -96,20 +95,25 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php
         echo "<table class='table table-bordered  table-hover '>";
         echo "<tr>";
-        echo "<th style=width:2%;' class='hor-center ver-middle'>#</th>";
-        echo "<th style=width:13%;' class='hor-center ver-middle'>Diller</th>";
+        echo "<th style='width:2%;' class='hor-center ver-middle'>#</th>";
+        echo "<th  class='hor-center ver-middle'>Diller</th>";
         foreach ($products as $product) {
-            echo "<th class='hor-center ver-middle'>".$product->name."</th>";
+            echo "<th style='width:5%;' class='hor-center ver-middle'>" . $product->name . "</th>";
         }
+        echo "<th style='width:5%;' class='hor-center ver-middle'>Ko'rish</th>";
         echo "</tr>";
         $n = 1;
         foreach ($dillers as $diller) {
             echo "<tr>";
-            echo "<td class='hor-center ver-middle'>".$n."</td>";
-            echo "<td class='ver-middle'>".$diller->name."</td>";
+            echo "<td class='hor-center ver-middle'>" . $n . "</td>";
+            echo "<td class='ver-middle'>" . $diller->name . "</td>";
             foreach ($products as $product) {
-                echo "<td class='hor-center ver-middle'>".$product->name."</td>";
+                $selling = $diller->getSelling($product->code, $model->day);
+                echo "<td class='hor-center ver-middle'>";
+                echo $selling ? $selling->buy : 0;
+                echo "</td>";
             }
+            echo "<td style='width:5%;' class='hor-center ver-middle'><a href='?r=milk/days/diller-view&id=".$diller->id."&day_id=".$model->id."' class='btn btn-sm btn-info'>Ko'rish</a></td>";
             echo "</tr>";
             $n++;
         }
@@ -126,3 +130,19 @@ $this->params['breadcrumbs'][] = $this->title;
         vertical-align: middle;
     }
 </style>
+<script>
+    function modal(diller_id) {
+        $.ajax({
+            url: "?r=milk/days/get-modal",
+            type: "POST",
+            data: ({
+                diller_id: diller_id,
+                _csrf: '<?= Yii::$app->request->getCsrfToken() ?>'
+            }),
+            success: function(data) {
+                console.log(data)
+                document.getElementById("div_" + diller_id).innerHTML = data
+            }
+        });
+    }
+</script>

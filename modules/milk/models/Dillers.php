@@ -77,4 +77,10 @@ class Dillers extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Sellings::class, ['diller_id' => 'id'])->where('dillers.status = true');
     }
+
+    public function getSelling($product_code,$day)
+    {
+        $model = Sellings::find()->where(['diller_id' => $this->id, 'product_code' => $product_code, 'day' => $day])->one();
+        return $model;
+    }
 }
