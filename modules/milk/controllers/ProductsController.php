@@ -227,4 +227,8 @@ class ProductsController extends Controller
         }
         return $this->redirect(Yii::$app->request->referrer);
     }
+
+    public function actionSaveExpenses(){
+        debug($_POST);
+    }
 }

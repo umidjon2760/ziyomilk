@@ -131,7 +131,42 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="card-body">
         <?php
-        echo "<table class='table table-bordered table-hover'>";
+        echo Html::beginForm(['/milk/products/save-expenses',], 'post',);
+
+        echo MultipleInput::widget([
+            'max' => 50,
+            'name' => 'multipleinput',
+            'columns' => [
+                [
+                    'name'  => 'expense_code',
+                    'type'  => 'dropDownList',
+                    'title' => 'Xarajatni tanlang',
+                    'items' => [
+                        1 => 'User 1',
+                        2 => 'User 2'
+                    ],
+                    'headerOptions' => [
+                        'style' => 'width: 40%;',
+                    ]
+                ],
+                [
+                    'name'  => 'count',
+                    'title' => 'Soni',
+                    'type'  => 'textInput',
+                ],
+                [
+                    'name'  => 'price',
+                    'title' => 'Narxi',
+                ],
+                [
+                    'name'  => 'given_sum',
+                    'title' => 'Berilgan summa',
+                ],
+            ],    
+        ]);
+        echo Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']);
+        echo Html::endForm();
+        echo "<br><table class='table table-bordered table-hover'>";
         echo "<tr>";
         echo "<th style='width:2%;' class='hor-center ver-middle'>#</th>";
         echo "<th class='hor-center ver-middle'>Xarajat nomi</th>";
@@ -142,23 +177,6 @@ $this->params['breadcrumbs'][] = $this->title;
         echo "<th style='width:12%;' class='hor-center ver-middle'>Qarz</th>";
         echo "</tr>";
         echo "</table>";
-        echo MultipleInput::widget([
-            'max' => 50,
-            'name' => 'multipleinput',
-            'columns' => [
-                [
-                    'name'  => 'file',
-                    'title' => 'Файлни танланг',
-                ],
-                [
-                    'name'  => 'file_name',
-                    'title' => 'Файлга ном беринг',
-                    'options' => [
-                        'class' => 'input-priority'
-                    ]
-                ]
-            ]
-        ]);
         ?>
     </div>
 </div>
