@@ -68,7 +68,7 @@ class ExpenseSpr extends \yii\db\ActiveRecord
     }
 
     public static function getAll(){
-        $model = ExpenseSpr::find()->all();
+        $model = ExpenseSpr::find()->where(['status' => true])->all();
         return $model;
     } 
 }

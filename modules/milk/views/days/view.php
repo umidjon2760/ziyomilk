@@ -135,31 +135,32 @@ $this->params['breadcrumbs'][] = $this->title;
 
         echo MultipleInput::widget([
             'max' => 50,
+            'min' => 1,
             'name' => 'multipleinput',
             'columns' => [
                 [
                     'name'  => 'expense_code',
                     'type'  => 'dropDownList',
                     'title' => 'Xarajatni tanlang',
-                    'items' => [
-                        1 => 'User 1',
-                        2 => 'User 2'
-                    ],
+                    'items' => ['' => 'Tanlang...'] + $expense_spr,
                     'headerOptions' => [
                         'style' => 'width: 40%;',
-                    ]
+                    ],
                 ],
                 [
                     'name'  => 'count',
                     'title' => 'Soni',
+                    'defaultValue' => 0,
                     'type'  => 'textInput',
                 ],
                 [
                     'name'  => 'price',
+                    'defaultValue' => 0,
                     'title' => 'Narxi',
                 ],
                 [
                     'name'  => 'given_sum',
+                    'defaultValue' => 0,
                     'title' => 'Berilgan summa',
                 ],
             ],    

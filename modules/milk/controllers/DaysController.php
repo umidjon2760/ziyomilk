@@ -11,6 +11,7 @@ use app\modules\milk\models\Products;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 
 /**
  * DaysController implements the CRUD actions for Days model.
@@ -63,7 +64,7 @@ class DaysController extends Controller
         $day = $this->findModel($id);
         $products = Products::find()->where(['status' => true])->all();
         $dillers = Dillers::find()->where(['status' => true])->all();
-        $expense_spr = ExpenseSpr::getAll();
+        $expense_spr = ArrayHelper::map(ExpenseSpr::getAll(),'code','name');
         return $this->render('view', [
             'model' => $day,
             'products' => $products,
