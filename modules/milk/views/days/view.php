@@ -13,14 +13,6 @@ $this->title = date('d.m.Y', strtotime($model->day));
 $this->params['breadcrumbs'][] = ['label' => 'Kunlar', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
-AppAsset::register($this);
-$this->registerJS('
-  $(".glyphicon-plus").addClass("fa fa-plus");
-  $(".fa-plus").removeClass("glyphicon glyphicon-plus");
-    $(".fa-plus").click(function(){
-  $(".glyphicon-remove").addClass("fas fa-remove");
-    })
-  ');
 ?>
 <div class="card collapsed-card" id="prductions">
     <div class="card-header">
@@ -151,7 +143,7 @@ $this->registerJS('
         echo "</tr>";
         echo "</table>";
         echo MultipleInput::widget([
-            'max' => 4,
+            'max' => 50,
             'name' => 'multipleinput',
             'columns' => [
                 [
@@ -171,6 +163,19 @@ $this->registerJS('
     </div>
 </div>
 <style>
+    .glyphicon {
+        font-family: "Font Awesome 5 Free";
+        font-weight: bold;
+    }
+
+    .glyphicon-plus::before {
+        content: "\002b";
+    }
+
+    .glyphicon-remove:before {
+        content: "\2212";
+    }
+
     .hor-center {
         text-align: center;
     }
