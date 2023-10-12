@@ -3,6 +3,7 @@
 namespace app\modules\milk\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "expense_spr".
@@ -65,4 +66,9 @@ class ExpenseSpr extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Expenses::class, ['expense_code' => 'code']);
     }
+
+    public static function getAll(){
+        $model = ExpenseSpr::find()->all();
+        return $model;
+    } 
 }

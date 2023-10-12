@@ -1,5 +1,7 @@
 <?php
 
+use app\assets\AppAsset;
+use unclead\multipleinput\MultipleInput;
 use yii\bootstrap4\Modal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -11,8 +13,16 @@ $this->title = date('d.m.Y', strtotime($model->day));
 $this->params['breadcrumbs'][] = ['label' => 'Kunlar', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+AppAsset::register($this);
+$this->registerJS('
+  $(".glyphicon-plus").addClass("fa fa-plus");
+  $(".fa-plus").removeClass("glyphicon glyphicon-plus");
+    $(".fa-plus").click(function(){
+  $(".glyphicon-remove").addClass("fas fa-remove");
+    })
+  ');
 ?>
-<div class="card" id="prductions">
+<div class="card collapsed-card" id="prductions">
     <div class="card-header">
         <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
             <h3 class="card-title" style="color:black;">Ishlab chiqarish</i>
@@ -85,7 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 
-<div class="card" id="dillers">
+<div class="card collapsed-card" id="dillers">
     <div class="card-header">
         <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
             <h3 class="card-title" style="color:black;">Dillerlar</i>
@@ -113,11 +123,50 @@ $this->params['breadcrumbs'][] = $this->title;
                 echo $selling ? $selling->buy : 0;
                 echo "</td>";
             }
-            echo "<td style='width:5%;' class='hor-center ver-middle'><a href='?r=milk/days/diller-view&id=".$diller->id."&day_id=".$model->id."' class='btn btn-sm btn-info'>Ko'rish</a></td>";
+            echo "<td style='width:5%;' class='hor-center ver-middle'><a href='?r=milk/days/diller-view&id=" . $diller->id . "&day_id=" . $model->id . "' class='btn btn-sm btn-info'>Ko'rish</a></td>";
             echo "</tr>";
             $n++;
         }
         echo "</table>";
+        ?>
+    </div>
+</div>
+<div class="card" id="xarajatlar">
+    <div class="card-header">
+        <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+            <h3 class="card-title" style="color:black;">Xarajatlar</i>
+        </button>
+    </div>
+    <div class="card-body">
+        <?php
+        echo "<table class='table table-bordered table-hover'>";
+        echo "<tr>";
+        echo "<th style='width:2%;' class='hor-center ver-middle'>#</th>";
+        echo "<th class='hor-center ver-middle'>Xarajat nomi</th>";
+        echo "<th style='width:8%;' class='hor-center ver-middle'>Soni</th>";
+        echo "<th style='width:12%;' class='hor-center ver-middle'>Narxi</th>";
+        echo "<th style='width:12%;' class='hor-center ver-middle'>Jami summa</th>";
+        echo "<th style='width:12%;' class='hor-center ver-middle'>Berilgan summa</th>";
+        echo "<th style='width:12%;' class='hor-center ver-middle'>Qarz</th>";
+        echo "</tr>";
+        echo "</table>";
+        echo MultipleInput::widget([
+            'max' => 4,
+            'name' => 'multipleinput',
+            'columns' => [
+                [
+                    'name'  => 'file',
+                    'title' => 'Файлни танланг',
+                ],
+                [
+                    'name'  => 'file_name',
+                    'title' => 'Файлга ном беринг',
+                    'options' => [
+                        'class' => 'input-priority'
+                    ]
+                ]
+            ]
+        ]);
         ?>
     </div>
 </div>

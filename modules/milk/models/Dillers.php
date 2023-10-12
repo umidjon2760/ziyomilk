@@ -83,4 +83,9 @@ class Dillers extends \yii\db\ActiveRecord
         $model = Sellings::find()->where(['diller_id' => $this->id, 'product_code' => $product_code, 'day' => $day])->one();
         return $model;
     }
+
+    public function getDillerCalc()
+    {
+        return $this->hasOne(DillersCalc::class, ['diller_id' => 'id']);
+    }
 }

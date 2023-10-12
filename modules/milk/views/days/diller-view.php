@@ -51,8 +51,28 @@ $this->params['breadcrumbs'][] = $this->title;
             $str .= "</tr>";
             $n++;
         }
+        $str .= "</table><br>";
+        $str .= "<table class='table table-bordered'>";
+        $str .= "<tr>";
+        $str .= "<th style=width:3%;' class='hor-center ver-middle'>#</th>";
+        $str .= "<th  class='hor-center ver-middle'>Diller</th>";
+        $str .= "<th style=width:20%;' class='hor-center ver-middle'>Jami summa</th>";
+        $str .= "<th style=width:20%;' class='hor-center ver-middle'>Bergan summa</th>";
+        $str .= "<th style=width:20%;' class='hor-center ver-middle'>Qarz</th>";
+        $str .= "</tr>";
+        $str .= "<tr>";
+        $value_all_sum = $diller->dillerCalc ? $diller->dillerCalc->all_sum : 0;
+        $value_given_sum = $diller->dillerCalc ? $diller->dillerCalc->given_sum : 0;
+        $value_loan_sum = $diller->dillerCalc ? $diller->dillerCalc->loan_sum : 0;
+        $str .= "<td style=width:3%;' class='hor-center ver-middle'>1</td>";
+        $str .= "<td  class='ver-middle'>".$diller->name."</td>";
+        $str .= "<td class='hor-center ver-middle'>".number_format($value_all_sum, 0, ',', ' ')."</td>";
+        $str .= "<td class='hor-center ver-middle'><input type='number'name='given_sum' step='0.1' min='0' class='form-control' value='" . $value_given_sum . "' /></td>";
+        $str .= "<td class='hor-center ver-middle'>".number_format($value_loan_sum, 0, ',', ' ')."</td>";
+        $str .= "</tr>";
         $str .= "</table>";
         echo $str;
+
         echo Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']);
         echo Html::endForm();
         ?>

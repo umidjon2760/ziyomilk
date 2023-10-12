@@ -3,6 +3,7 @@
 namespace app\modules\milk\controllers;
 
 use app\modules\milk\models\Days;
+use app\modules\milk\models\DillersCalc;
 use app\modules\milk\models\Productions;
 use app\modules\milk\models\Products;
 use app\modules\milk\models\ProductsSearch;
@@ -138,24 +139,23 @@ class ProductsController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionSaveProduction(){
+    public function actionSaveProduction()
+    {
         $product_codes = $_POST['product_code'];
         $day = Days::getOpenDay();
         $now = date('Y-m-d H:i:s');
         foreach ($product_codes as $product_code) {
             $production = Productions::findOne($_POST['production_id'][$product_code]);
             $count = $_POST['count'][$product_code];
-            if($production){
-                if($count == 0){
+            if ($production) {
+                if ($count == 0) {
                     $production->delete();
-                }
-                else{
+                } else {
                     $production->count = $count;
                     $production->save(false);
                 }
-            }
-            else{
-                if($count != 0){
+            } else {
+                if ($count != 0) {
                     $production = new Productions();
                     $production->product_code = $product_code;
                     $production->count = $count;
@@ -176,20 +176,22 @@ class ProductsController extends Controller
         $now = date('Y-m-d H:i:s');
         $product_codes = $_POST['product_code'];
         $diller_id = $_POST['diller_id'];
+        $all_sum1 = 0;
         foreach ($product_codes as $product_code) {
             $selling_id = $_POST['selling_id'][$product_code];
             $price = $_POST['price'][$product_code];
             $buy = $_POST['buy'][$product_code];
             $return = $_POST['return'][$product_code];
             $all_sum = ($buy - $return) * $price;
+            $all_sum1 += $all_sum;
             $selling = Sellings::find()->where(['id' => $selling_id])->one();
-            if($selling){
+            if ($selling) {
                 $selling->buy = $buy;
                 $selling->return = $return;
                 $selling->all_sum = $all_sum;
+                $selling->updated_at = $now;
                 $selling->save(false);
-            }
-            else{
+            } else {
                 $selling = new Sellings();
                 $selling->diller_id = $diller_id;
                 $selling->product_code = $product_code;
@@ -201,6 +203,27 @@ class ProductsController extends Controller
                 $selling->updated_at = $now;
                 $selling->save(false);
             }
+        }
+        $given_sum = $all_sum1 == 0 ? 0 : $_POST['given_sum'];
+        $loan_sum = $all_sum1 == 0 ? 0 : $all_sum1 - $given_sum;
+        $diller_calc = DillersCalc::find()->where(['diller_id' => $diller_id, 'day' => $day])->one();
+        if($diller_calc){
+            $diller_calc->given_sum = $given_sum;
+            $diller_calc->loan_sum = $loan_sum;
+            $diller_calc->all_sum = $all_sum1;
+            $diller_calc->updated_at = $now;
+            $diller_calc->save(false);
+        }
+        else{
+            $diller_calc = new DillersCalc();
+            $diller_calc->diller_id = $diller_id;
+            $diller_calc->given_sum = $given_sum;
+            $diller_calc->loan_sum = $loan_sum;
+            $diller_calc->all_sum = $all_sum1;
+            $diller_calc->day = $day;
+            $diller_calc->created_at = $now;
+            $diller_calc->updated_at = $now;
+            $diller_calc->save(false);
         }
         return $this->redirect(Yii::$app->request->referrer);
     }

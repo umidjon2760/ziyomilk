@@ -5,6 +5,7 @@ namespace app\modules\milk\controllers;
 use app\modules\milk\models\Days;
 use app\modules\milk\models\DaysSerach;
 use app\modules\milk\models\Dillers;
+use app\modules\milk\models\ExpenseSpr;
 use app\modules\milk\models\Productions;
 use app\modules\milk\models\Products;
 use yii\web\Controller;
@@ -62,9 +63,11 @@ class DaysController extends Controller
         $day = $this->findModel($id);
         $products = Products::find()->where(['status' => true])->all();
         $dillers = Dillers::find()->where(['status' => true])->all();
+        $expense_spr = ExpenseSpr::getAll();
         return $this->render('view', [
             'model' => $day,
             'products' => $products,
+            'expense_spr' => $expense_spr,
             'dillers' => $dillers
         ]);
     }
