@@ -4,6 +4,7 @@ namespace app\modules\milk\controllers;
 
 use app\modules\milk\models\Days;
 use app\modules\milk\models\DillersCalc;
+use app\modules\milk\models\Expenses;
 use app\modules\milk\models\Productions;
 use app\modules\milk\models\Products;
 use app\modules\milk\models\ProductsSearch;
@@ -230,5 +231,26 @@ class ProductsController extends Controller
 
     public function actionSaveExpenses(){
         debug($_POST);
+        $day = Days::getOpenDay();
+        $now = date('Y-m-d H:i:s');
+        $expense_code = $_POST['expense_code'];
+        $count = $_POST['count'];
+        $price = $_POST['price'];
+        $given_sum = $_POST['given_sum'];
+        $all_sum = $count * $price;
+        $loan_sum = $all_sum - $given_sum;
+        $expense = new Expenses();
+        $expense->expense_code = $expense_code;
+        $expense->sum = $price;
+        $expense->day = $day;
+        $expense->count = $count;
+        $expense->all_sum = $all_sum;
+        $expense->given_sum = $given_sum;
+        $expense->created_at = $now;
+        $expense->updated_at = $now;
+        $expense->save();
+        if($loan_sum == 0){
+            
+        }
     }
 }
