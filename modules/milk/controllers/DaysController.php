@@ -67,18 +67,20 @@ class DaysController extends Controller
         $dillers = Dillers::find()->where(['status' => true])->all();
         $expense_spr = ArrayHelper::map(ExpenseSpr::getAll(),'code','name');
         $array = [];
-        $expenses = Expenses::find()->where(['day'=>$day])->all();
+        $expenses = Expenses::find()->where(['day'=>$day->day])->all();
         foreach ($expenses as $expense) {
             $array[] = [
                 'expense_code' => $expense->expense_code,
-                'count' => $expense->sum,
                 'count' => $expense->count,
+                'price' => $expense->sum,
+                'given_sum' => 0,
             ];
         }
         return $this->render('view', [
             'model' => $day,
             'products' => $products,
             'expense_spr' => $expense_spr,
+            'data' => $array,
             'dillers' => $dillers
         ]);
     }
