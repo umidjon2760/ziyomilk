@@ -136,6 +136,7 @@ $this->params['breadcrumbs'][] = $this->title;
         echo MultipleInput::widget([
             'max' => 50,
             'min' => 1,
+            'data' => $data,
             'name' => 'multipleinput',
             'columns' => [
                 [

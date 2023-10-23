@@ -5,6 +5,7 @@ namespace app\modules\milk\controllers;
 use app\modules\milk\models\Days;
 use app\modules\milk\models\DillersCalc;
 use app\modules\milk\models\Expenses;
+use app\modules\milk\models\Loans;
 use app\modules\milk\models\Productions;
 use app\modules\milk\models\Products;
 use app\modules\milk\models\ProductsSearch;
@@ -230,27 +231,64 @@ class ProductsController extends Controller
     }
 
     public function actionSaveExpenses(){
-        debug($_POST);
+        // debug($_POST);
         $day = Days::getOpenDay();
         $now = date('Y-m-d H:i:s');
-        $expense_code = $_POST['expense_code'];
-        $count = $_POST['count'];
-        $price = $_POST['price'];
-        $given_sum = $_POST['given_sum'];
-        $all_sum = $count * $price;
-        $loan_sum = $all_sum - $given_sum;
-        $expense = new Expenses();
-        $expense->expense_code = $expense_code;
-        $expense->sum = $price;
-        $expense->day = $day;
-        $expense->count = $count;
-        $expense->all_sum = $all_sum;
-        $expense->given_sum = $given_sum;
-        $expense->created_at = $now;
-        $expense->updated_at = $now;
-        $expense->save();
-        if($loan_sum == 0){
+        foreach ($_POST['multipleinput'] as $key => $array) {
+            $expense_code = $array['expense_code'];
+            $count = $array['count'];
+            $price = $array['price'];
+            $given_sum = $array['given_sum'];
+            $all_sum = $count * $price;
+            $loan_sum = $all_sum - $given_sum;
+            $expense = Expenses::find()->where(['expense_code'=>$expense_code,'day'=>$day])->one();
+            if($expense){
+                $expense->sum = $price;
+                $expense->count = $count;
+                $expense->all_sum = $all_sum;
+                $expense->given_sum = $given_sum;
+                $expense->updated_at = $now;
+            }
+            else{
+                $expense = new Expenses();
+                $expense->expense_code = $expense_code;
+                $expense->sum = $price;
+                $expense->day = $day;
+                $expense->count = $count;
+                $expense->all_sum = $all_sum;
+                $expense->given_sum = $given_sum;
+                $expense->created_at = $now;
+                $expense->updated_at = $now;
+            }
+            $expense->save(false);
+            $loan = Loans::find()->where(['expense_id' => $expense->id])->one();
+            if($loan){
+                if($loan_sum > 0){
+                    $loan->loan_sum = $loan_sum;
+                    $loan->given_sum = 0;
+                    $loan->updated_at = $now;
+                    $loan->save(false);
+                }
+                else{
+                    $loan->loan_sum = $loan_sum;
+                    $loan->given_sum = $loan_sum;
+                    $loan->updated_at = $now;
+                    $loan->save(false);
+                }
+            }
+            else{
+                if($loan_sum > 0){
+                    $loan = new Loans();
+                    $loan->expense_id = $expense->id;
+                    $loan->loan_sum = $loan_sum;
+                    $loan->given_sum = 0;
+                    $loan->created_at = $now;
+                    $loan->updated_at = $now;
+                    $loan->save(false);
+                }
+            }
             
         }
+        return $this->redirect(Yii::$app->request->referrer);
     }
 }

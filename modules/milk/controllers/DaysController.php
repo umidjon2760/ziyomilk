@@ -5,6 +5,7 @@ namespace app\modules\milk\controllers;
 use app\modules\milk\models\Days;
 use app\modules\milk\models\DaysSerach;
 use app\modules\milk\models\Dillers;
+use app\modules\milk\models\Expenses;
 use app\modules\milk\models\ExpenseSpr;
 use app\modules\milk\models\Productions;
 use app\modules\milk\models\Products;
@@ -65,6 +66,15 @@ class DaysController extends Controller
         $products = Products::find()->where(['status' => true])->all();
         $dillers = Dillers::find()->where(['status' => true])->all();
         $expense_spr = ArrayHelper::map(ExpenseSpr::getAll(),'code','name');
+        $array = [];
+        $expenses = Expenses::find()->where(['day'=>$day])->all();
+        foreach ($expenses as $expense) {
+            $array[] = [
+                'expense_code' => $expense->expense_code,
+                'count' => $expense->sum,
+                'count' => $expense->count,
+            ];
+        }
         return $this->render('view', [
             'model' => $day,
             'products' => $products,
