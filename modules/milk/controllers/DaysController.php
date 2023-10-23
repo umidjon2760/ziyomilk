@@ -7,6 +7,7 @@ use app\modules\milk\models\DaysSerach;
 use app\modules\milk\models\Dillers;
 use app\modules\milk\models\Expenses;
 use app\modules\milk\models\ExpenseSpr;
+use app\modules\milk\models\Loans;
 use app\modules\milk\models\Productions;
 use app\modules\milk\models\Products;
 use yii\web\Controller;
@@ -66,7 +67,7 @@ class DaysController extends Controller
         $products = Products::find()->where(['status' => true])->all();
         $dillers = Dillers::find()->where(['status' => true])->all();
         $expense_spr = ArrayHelper::map(ExpenseSpr::getAll(),'code','name');
-        $array = [];
+        $data = [];
         $expenses = Expenses::find()->where(['day'=>$day->day])->all();
         foreach ($expenses as $expense) {
             if(!$expense->loan){
@@ -75,19 +76,21 @@ class DaysController extends Controller
             else{
                 $given_sum = ($expense->count * $expense->sum) - $expense->loan->loan_sum;
             }
-            $array[] = [
+            $data[] = [
                 'expense_code' => $expense->expense_code,
                 'count' => $expense->count,
                 'price' => $expense->sum,
                 'given_sum' => $given_sum,
             ];
         }
+        $loans = Loans::find()->orderBy(['updated_at' => SORT_DESC])->all();
         return $this->render('view', [
             'model' => $day,
             'products' => $products,
             'expense_spr' => $expense_spr,
-            'data' => $array,
-            'dillers' => $dillers
+            'dillers' => $dillers,
+            'data' => $data,
+            'loans' => $loans
         ]);
     }
 

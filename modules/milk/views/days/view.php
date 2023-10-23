@@ -123,7 +123,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
     </div>
 </div>
-<div class="card" id="xarajatlar">
+<div class="card collapsed-card" id="xarajatlar">
     <div class="card-header">
         <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
             <h3 class="card-title" style="color:black;">Xarajatlar</i>
@@ -180,6 +180,15 @@ $this->params['breadcrumbs'][] = $this->title;
         echo "</tr>";
         echo "</table>";
         ?>
+    </div>
+</div>
+<div class="card" id="loans">
+    <div class="card-header">
+        <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+            <h3 class="card-title" style="color:black;">Qarzlar</i>
+        </button>
+    </div>
+    <div class="card-body">
     </div>
 </div>
 <style>

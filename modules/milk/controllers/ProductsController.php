@@ -265,7 +265,6 @@ class ProductsController extends Controller
                 if ($loan_sum > 0) {
                     $loan->loan_sum = $loan_sum;
                     $loan->given_sum = 0;
-                    $loan->day = $day;
                     $loan->updated_at = $now;
                     $loan->save(false);
                 } elseif ($loan_sum == 0) {
@@ -276,7 +275,6 @@ class ProductsController extends Controller
                     $loan = new Loans();
                     $loan->expense_id = $expense->id;
                     $loan->loan_sum = $loan_sum;
-                    $loan->day = $day;
                     $loan->given_sum = 0;
                     $loan->created_at = $now;
                     $loan->updated_at = $now;
