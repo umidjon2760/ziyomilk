@@ -74,6 +74,11 @@ class Expenses extends \yii\db\ActiveRecord
         return $this->hasOne(Days::class, ['day' => 'day']);
     }
 
+    public function getLoan()
+    {
+        return $this->hasOne(Loans::class, ['expense_id' => 'id']);
+    }
+
     /**
      * Gets query for [[ExpenseCode]].
      *

@@ -69,11 +69,17 @@ class DaysController extends Controller
         $array = [];
         $expenses = Expenses::find()->where(['day'=>$day->day])->all();
         foreach ($expenses as $expense) {
+            if(!$expense->loan){
+                $given_sum = $expense->count * $expense->sum;
+            }
+            else{
+                $given_sum = ($expense->count * $expense->sum) - $expense->loan->loan_sum;
+            }
             $array[] = [
                 'expense_code' => $expense->expense_code,
                 'count' => $expense->count,
                 'price' => $expense->sum,
-                'given_sum' => 0,
+                'given_sum' => $given_sum,
             ];
         }
         return $this->render('view', [

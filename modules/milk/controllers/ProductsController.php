@@ -209,14 +209,13 @@ class ProductsController extends Controller
         $given_sum = $all_sum1 == 0 ? 0 : $_POST['given_sum'];
         $loan_sum = $all_sum1 == 0 ? 0 : $all_sum1 - $given_sum;
         $diller_calc = DillersCalc::find()->where(['diller_id' => $diller_id, 'day' => $day])->one();
-        if($diller_calc){
+        if ($diller_calc) {
             $diller_calc->given_sum = $given_sum;
             $diller_calc->loan_sum = $loan_sum;
             $diller_calc->all_sum = $all_sum1;
             $diller_calc->updated_at = $now;
             $diller_calc->save(false);
-        }
-        else{
+        } else {
             $diller_calc = new DillersCalc();
             $diller_calc->diller_id = $diller_id;
             $diller_calc->given_sum = $given_sum;
@@ -230,7 +229,8 @@ class ProductsController extends Controller
         return $this->redirect(Yii::$app->request->referrer);
     }
 
-    public function actionSaveExpenses(){
+    public function actionSaveExpenses()
+    {
         // debug($_POST);
         $day = Days::getOpenDay();
         $now = date('Y-m-d H:i:s');
@@ -241,15 +241,14 @@ class ProductsController extends Controller
             $given_sum = $array['given_sum'];
             $all_sum = $count * $price;
             $loan_sum = $all_sum - $given_sum;
-            $expense = Expenses::find()->where(['expense_code'=>$expense_code,'day'=>$day])->one();
-            if($expense){
+            $expense = Expenses::find()->where(['expense_code' => $expense_code, 'day' => $day])->one();
+            if ($expense) {
                 $expense->sum = $price;
                 $expense->count = $count;
                 $expense->all_sum = $all_sum;
                 $expense->given_sum = $given_sum;
                 $expense->updated_at = $now;
-            }
-            else{
+            } else {
                 $expense = new Expenses();
                 $expense->expense_code = $expense_code;
                 $expense->sum = $price;
@@ -262,32 +261,28 @@ class ProductsController extends Controller
             }
             $expense->save(false);
             $loan = Loans::find()->where(['expense_id' => $expense->id])->one();
-            if($loan){
-                if($loan_sum > 0){
+            if ($loan) {
+                if ($loan_sum > 0) {
                     $loan->loan_sum = $loan_sum;
                     $loan->given_sum = 0;
+                    $loan->day = $day;
                     $loan->updated_at = $now;
                     $loan->save(false);
+                } elseif ($loan_sum == 0) {
+                    $loan->delete();
                 }
-                else{
-                    $loan->loan_sum = $loan_sum;
-                    $loan->given_sum = $loan_sum;
-                    $loan->updated_at = $now;
-                    $loan->save(false);
-                }
-            }
-            else{
-                if($loan_sum > 0){
+            } else {
+                if ($loan_sum > 0) {
                     $loan = new Loans();
                     $loan->expense_id = $expense->id;
                     $loan->loan_sum = $loan_sum;
+                    $loan->day = $day;
                     $loan->given_sum = 0;
                     $loan->created_at = $now;
                     $loan->updated_at = $now;
                     $loan->save(false);
                 }
             }
-            
         }
         return $this->redirect(Yii::$app->request->referrer);
     }
