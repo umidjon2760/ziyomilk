@@ -5,27 +5,26 @@ namespace app\modules\milk\models;
 use Yii;
 
 /**
- * This is the model class for table "loans".
+ * This is the model class for table "loans_calc".
  *
  * @property int $id
- * @property int|null $expense_id
- * @property float|null $loan_sum
+ * @property int|null $loan_id
  * @property float|null $given_sum
  * @property string|null $day
  * @property string|null $created_at
  * @property string|null $updated_at
  *
  * @property Days $day0
- * @property Expenses $expense
+ * @property Loans $loan
  */
-class Loans extends \yii\db\ActiveRecord
+class LoansCalc extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'loans';
+        return 'loans_calc';
     }
 
     /**
@@ -34,11 +33,11 @@ class Loans extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['expense_id'], 'integer'],
-            [['loan_sum', 'given_sum'], 'number'],
+            [['loan_id'], 'integer'],
+            [['given_sum'], 'number'],
             [['day', 'created_at', 'updated_at'], 'safe'],
             [['day'], 'exist', 'skipOnError' => true, 'targetClass' => Days::class, 'targetAttribute' => ['day' => 'day']],
-            [['expense_id'], 'exist', 'skipOnError' => true, 'targetClass' => Expenses::class, 'targetAttribute' => ['expense_id' => 'id']],
+            [['loan_id'], 'exist', 'skipOnError' => true, 'targetClass' => Loans::class, 'targetAttribute' => ['loan_id' => 'id']],
         ];
     }
 
@@ -49,8 +48,7 @@ class Loans extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'expense_id' => 'Expense ID',
-            'loan_sum' => 'Loan Sum',
+            'loan_id' => 'Loan ID',
             'given_sum' => 'Given Sum',
             'day' => 'Day',
             'created_at' => 'Created At',
@@ -69,23 +67,12 @@ class Loans extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Expense]].
+     * Gets query for [[Loan]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getExpense()
+    public function getLoan()
     {
-        return $this->hasOne(Expenses::class, ['id' => 'expense_id']);
-    }
-
-    public function getLoansCalcs()
-    {
-        return $this->hasMany(LoansCalc::class, ['loan_id' => 'id']);
-    }
-
-    public function getLoansCalc($day)
-    {
-        $model = LoansCalc::find()->where(['loan_id' => $this->id, 'day' => $day])->one();
-        return $model;
+        return $this->hasOne(Loans::class, ['id' => 'loan_id']);
     }
 }

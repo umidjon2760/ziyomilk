@@ -8,6 +8,7 @@ use app\modules\milk\models\Dillers;
 use app\modules\milk\models\Expenses;
 use app\modules\milk\models\ExpenseSpr;
 use app\modules\milk\models\Loans;
+use app\modules\milk\models\LoansCalc;
 use app\modules\milk\models\Productions;
 use app\modules\milk\models\Products;
 use yii\web\Controller;
@@ -66,14 +67,13 @@ class DaysController extends Controller
         $day = $this->findModel($id);
         $products = Products::find()->where(['status' => true])->all();
         $dillers = Dillers::find()->where(['status' => true])->all();
-        $expense_spr = ArrayHelper::map(ExpenseSpr::getAll(),'code','name');
+        $expense_spr = ArrayHelper::map(ExpenseSpr::getAll(), 'code', 'name');
         $data = [];
-        $expenses = Expenses::find()->where(['day'=>$day->day])->all();
+        $expenses = Expenses::find()->where(['day' => $day->day])->all();
         foreach ($expenses as $expense) {
-            if(!$expense->loan){
+            if (!$expense->loan) {
                 $given_sum = $expense->count * $expense->sum;
-            }
-            else{
+            } else {
                 $given_sum = ($expense->count * $expense->sum) - $expense->loan->loan_sum;
             }
             $data[] = [
@@ -83,7 +83,11 @@ class DaysController extends Controller
                 'given_sum' => $given_sum,
             ];
         }
-        $loans = Loans::find()->orderBy(['updated_at' => SORT_DESC])->all();
+        $loans = Loans::find()->alias('l')->where([
+            'or',
+            ['in', 'l.id', LoansCalc::find()->alias('lc')->select('lc.loan_id')->where('l.loan_sum > lc.given_sum')],
+            ['not in', 'l.id', LoansCalc::find()->alias('lcc')->select('lcc.loan_id')]
+        ])->orderBy(['l.loan_sum' => SORT_DESC])->all();
         return $this->render('view', [
             'model' => $day,
             'products' => $products,
@@ -199,7 +203,7 @@ class DaysController extends Controller
         exit;
     }
 
-    public function actionDillerView($id,$day_id)
+    public function actionDillerView($id, $day_id)
     {
         $diller = Dillers::findOne($id);
         return $this->render('diller-view', [

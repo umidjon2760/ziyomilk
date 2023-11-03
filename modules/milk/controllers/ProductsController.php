@@ -6,6 +6,7 @@ use app\modules\milk\models\Days;
 use app\modules\milk\models\DillersCalc;
 use app\modules\milk\models\Expenses;
 use app\modules\milk\models\Loans;
+use app\modules\milk\models\LoansCalc;
 use app\modules\milk\models\Productions;
 use app\modules\milk\models\Products;
 use app\modules\milk\models\ProductsSearch;
@@ -264,10 +265,12 @@ class ProductsController extends Controller
             if ($loan) {
                 if ($loan_sum > 0) {
                     $loan->loan_sum = $loan_sum;
-                    $loan->given_sum = 0;
                     $loan->updated_at = $now;
                     $loan->save(false);
                 } elseif ($loan_sum == 0) {
+                    foreach ($loan->loansCalcs as $loanCalcs) {
+                        $loanCalcs->delete();
+                    }
                     $loan->delete();
                 }
             } else {
@@ -275,11 +278,35 @@ class ProductsController extends Controller
                     $loan = new Loans();
                     $loan->expense_id = $expense->id;
                     $loan->loan_sum = $loan_sum;
-                    $loan->given_sum = 0;
                     $loan->created_at = $now;
                     $loan->updated_at = $now;
                     $loan->save(false);
                 }
+            }
+        }
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+    public function actionSaveLoans()
+    {
+        // debug($_POST);
+        $day = $_POST['day'];
+        $all = $_POST['given_sum'];
+        $now = date('Y-m-d H:i:s');
+        foreach ($all as $loan_id => $given_sum) {
+            $loans_calc = LoansCalc::find()->where(['loan_id' => $loan_id, 'day' => $day])->one();
+            if($loans_calc){
+                $loans_calc->given_sum = $given_sum;
+                $loans_calc->updated_at = $now;
+                $loans_calc->save(false);
+            }
+            else{
+                $loans_calc = new LoansCalc();
+                $loans_calc->loan_id = $loan_id;
+                $loans_calc->given_sum = $given_sum;
+                $loans_calc->day = $day;
+                $loans_calc->created_at = $now;
+                $loans_calc->updated_at = $now;
+                $loans_calc->save(false);
             }
         }
         return $this->redirect(Yii::$app->request->referrer);

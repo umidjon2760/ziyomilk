@@ -4,4 +4,8 @@ function debug($arr){
     print_r($arr);
     echo "</pre>";die;
 }
+
+function numberFormat($number,$length){
+    return number_format($number, $length, ',', ' ');
+}
 ?>
