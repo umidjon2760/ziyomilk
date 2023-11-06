@@ -62,7 +62,7 @@ class DaysController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id,$type)
+    public function actionView($id,$type = 1)
     {
         $day = $this->findModel($id);
         $products = Products::find()->where(['status' => true])->all();
