@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="days-index card">
     <div class="card-body">
-        <a href="?r=milk/days/view&id=<?= $day_id ?>" class="btn btn-primary">Ortga</a><br><br>
+        <a href="?r=milk/days/view&id=<?= $day_id ?>&type=2" class="btn btn-primary">Ortga</a><br><br>
         <?php
         echo Html::beginForm(['/milk/products/save-sellings',], 'post',);
         $products = Products::find()->where(['status' => true])->all();
