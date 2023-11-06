@@ -29,7 +29,7 @@ class Investment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['day', 'created_at', 'updated_at'], 'safe'],
+            [['day','comment', 'created_at', 'updated_at'], 'safe'],
             [['sum'], 'number'],
         ];
     }
@@ -43,6 +43,7 @@ class Investment extends \yii\db\ActiveRecord
             'id' => 'ID',
             'day' => 'Day',
             'sum' => 'Sum',
+            'comment' => 'Comment',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

@@ -16,6 +16,7 @@ class m231005_072520_create_investment_table extends Migration
             'id' => $this->primaryKey(),
             'day' => $this->date(),
             'sum' => $this->float(),
+            'comment' => $this->text(),
             'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime()
         ]);

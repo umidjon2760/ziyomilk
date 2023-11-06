@@ -106,6 +106,15 @@ class Days extends \yii\db\ActiveRecord
         return $this->hasMany(Productions::class, ['day' => 'day']);
     }
 
+    public function getKassa()
+    {
+        return $this->hasOne(Kassa::class, ['day' => 'day']);
+    }
+    public function getInvestment()
+    {
+        return $this->hasOne(Investment::class, ['day' => 'day']);
+    }
+
     /**
      * Gets query for [[Sellings]].
      *

@@ -34,7 +34,7 @@ class AllProducts extends \yii\db\ActiveRecord
     {
         return [
             [['product_code'], 'required'],
-            [['count'], 'integer'],
+            [['count'], 'number'],
             [['day', 'created_at', 'updated_at'], 'safe'],
             [['product_code'], 'string', 'max' => 50],
             [['day'], 'exist', 'skipOnError' => true, 'targetClass' => Days::class, 'targetAttribute' => ['day' => 'day']],
@@ -72,7 +72,7 @@ class AllProducts extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getProductCode()
+    public function getProduct()
     {
         return $this->hasOne(Products::class, ['code' => 'product_code']);
     }

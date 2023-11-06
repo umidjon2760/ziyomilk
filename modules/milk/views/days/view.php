@@ -182,7 +182,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
     </div>
 </div>
-<div class="card" id="loans">
+<div class="card collapsed-card" id="loans">
     <div class="card-header">
         <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
             <h3 class="card-title" style="color:black;">Qarzlar</i></h3>
@@ -210,7 +210,7 @@ $this->params['breadcrumbs'][] = $this->title;
             $loans_calc_str = "";
             foreach ($loan->loansCalcs as $loansCalc) {
                 $loans_calc_sum += $loansCalc->given_sum;
-                $loans_calc_str .= " + ".numberFormat($loansCalc->given_sum,0);
+                $loans_calc_str .= " + " . numberFormat($loansCalc->given_sum, 0);
             }
             echo "<input type='hidden'name='loan_id[]' class='form-control' value='" . $loan->id . "' />";
             $expense = $loan->expense;
@@ -221,12 +221,98 @@ $this->params['breadcrumbs'][] = $this->title;
             echo "<td class='hor-center'>" . $expense->count . "</td>";
             echo "<td class='hor-center'>" . numberFormat($expense->sum, 0) . "</td>";
             echo "<td class='hor-center'>" . numberFormat($expense->all_sum, 0) . "</td>";
-            echo "<td class='hor-center'>" . numberFormat($expense->given_sum, 0) . " ".$loans_calc_str . "</td>";
-            echo "<td class='hor-center'><input type='number' name='given_sum[".$loan->id."]' step='1' min='1' max='".$loan->loan_sum."' class='form-control' value='" . $value_given_sum . "' /></td>";
+            echo "<td class='hor-center'>" . numberFormat($expense->given_sum, 0) . " " . $loans_calc_str . "</td>";
+            echo "<td class='hor-center'><input type='number' name='given_sum[" . $loan->id . "]' step='1' min='1' max='" . $loan->loan_sum . "' class='form-control' value='" . $value_given_sum . "' /></td>";
             echo "<td class='hor-center'>" . numberFormat($loan->loan_sum - $loans_calc_sum, 0) . "</td>";
             echo "</tr>";
             $l++;
         }
+        echo "</table>";
+        echo Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']);
+        echo Html::endForm();
+        ?>
+    </div>
+</div>
+<div class="card collapsed-card" id="all_products">
+    <div class="card-header">
+        <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+            <h3 class="card-title" style="color:black;">Barcha maxsulotlar</i></h3>
+        </button>
+    </div>
+    <div class="card-body">
+        <?php
+        echo "<table class='table table-bordered  table-hover '>";
+        echo "<tr>";
+        echo "<th style=width:3%;' class='hor-center ver-middle'>#</th>";
+        echo "<th class='hor-center ver-middle'>Maxsulot nomi</th>";
+        echo "<th style=width:15%;' class='hor-center ver-middle'>Soni</th>";
+        echo "</tr>";
+        $t = 1;
+        foreach ($model->allProducts as $all_product) {
+            echo "<tr>";
+            echo "<td class='hor-center ver-middle'>" . $t . "</td>";
+            echo "<td class='ver-middle'>" . $all_product->product->name . "</td>";
+            echo "<td class='hor-center ver-middle'>" . $all_product->count . "</td>";
+            echo "</tr>";
+            $t++;
+        }
+        echo "</table>";
+        ?>
+    </div>
+</div>
+<div class="card" id="investment">
+    <div class="card-header">
+        <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+            <h3 class="card-title" style="color:black;">Investitsiya</i></h3>
+        </button>
+    </div>
+    <div class="card-body">
+    <?php
+        $value_invest = $model->investment ? $model->investment->sum : 0;
+        $value_comment = $model->investment ? $model->investment->comment : "";
+        echo Html::beginForm(['/milk/products/save-invest',], 'post');
+        echo "<input type='hidden'name='day' class='form-control' value='" . $model->day . "' />";
+        echo "<table class='table table-bordered  table-hover '>";
+        echo "<tr>";
+        echo "<th style=width:3%;' class='hor-center ver-middle'>#</th>";
+        echo "<th class='hor-center ver-middle'>Kun</th>";
+        echo "<th style=width:30%;' class='hor-center ver-middle'>Investitsiya (so'm)</th>";
+        echo "<th style=width:50%;' class='hor-center ver-middle'>Izoh</th>";
+        echo "</tr>";
+        echo "<tr>";
+        echo "<td style=width:3%;' class='hor-center ver-middle'>1</td>";
+        echo "<td class='hor-center ver-middle'>".date('d.m.Y',strtotime($model->day))."</td>";
+        echo "<td class='hor-center ver-middle'><input value='".$value_invest."' type='number' required name='invest' step='1' min='1'  class='form-control'  /></td>";
+        echo "<td class='hor-center ver-middle'><textarea rows='1' placeholder='Izoh kiriting ...' name='comment' class='form-control'  >".$value_comment."</textarea></td>";
+        echo "</tr>";
+        echo "</table>";
+        echo Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']);
+        echo Html::endForm();
+        ?>
+    </div>
+</div>
+<div class="card" id="kassa">
+    <div class="card-header">
+        <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+            <h3 class="card-title" style="color:black;">Kassa</i></h3>
+        </button>
+    </div>
+    <div class="card-body">
+        <?php
+        $value_kassa = $model->kassa ? $model->kassa->sum : 0;
+        echo Html::beginForm(['/milk/products/save-kassa',], 'post');
+        echo "<input type='hidden'name='day' class='form-control' value='" . $model->day . "' />";
+        echo "<table class='table table-bordered  table-hover '>";
+        echo "<tr>";
+        echo "<th style=width:3%;' class='hor-center ver-middle'>#</th>";
+        echo "<th class='hor-center ver-middle'>Kun</th>";
+        echo "<th style=width:40%;' class='hor-center ver-middle'>Kassa (so'm)</th>";
+        echo "</tr>";
+        echo "<tr>";
+        echo "<td style=width:3%;' class='hor-center ver-middle'>1</td>";
+        echo "<td class='hor-center ver-middle'>".date('d.m.Y',strtotime($model->day))."</td>";
+        echo "<td style=width:40%;' class='hor-center ver-middle'><input value='".$value_kassa."' type='number' required name='kassa' step='1' min='1'  class='form-control'  /></td>";
+        echo "</tr>";
         echo "</table>";
         echo Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']);
         echo Html::endForm();

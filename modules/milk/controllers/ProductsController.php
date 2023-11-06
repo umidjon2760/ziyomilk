@@ -2,9 +2,12 @@
 
 namespace app\modules\milk\controllers;
 
+use app\modules\milk\models\AllProducts;
 use app\modules\milk\models\Days;
 use app\modules\milk\models\DillersCalc;
 use app\modules\milk\models\Expenses;
+use app\modules\milk\models\Investment;
+use app\modules\milk\models\Kassa;
 use app\modules\milk\models\Loans;
 use app\modules\milk\models\LoansCalc;
 use app\modules\milk\models\Productions;
@@ -150,14 +153,18 @@ class ProductsController extends Controller
         foreach ($product_codes as $product_code) {
             $production = Productions::findOne($_POST['production_id'][$product_code]);
             $count = $_POST['count'][$product_code];
+            $delete = false;
             if ($production) {
+                $old_count = $production->count;
                 if ($count == 0) {
                     $production->delete();
+                    $delete = true;
                 } else {
                     $production->count = $count;
                     $production->save(false);
                 }
             } else {
+                $old_count = 0;
                 if ($count != 0) {
                     $production = new Productions();
                     $production->product_code = $product_code;
@@ -169,6 +176,38 @@ class ProductsController extends Controller
                     $production->save(false);
                 }
             }
+            $all_product = AllProducts::find()->where(['product_code' => $product_code, 'day' => $day])->one();
+            if ($all_product) {
+                if (!$delete && $production) {
+                    $diff_count = $production->count - $old_count;
+                    $k = 'all_product and production have<br>production_count => '.$production->count.'<br>diff =>'.$diff_count."<br>old_count => ".$old_count;
+                    $all_product_count = $all_product->count + $diff_count;
+                    $all_product->count = $all_product_count;
+                    $all_product->updated_at = $now;
+                    $all_product->save(false);
+                } else {
+                    $k = 'all_product have '.$old_count;
+                    $all_product_count = $all_product->count - $old_count;
+                    $all_product->count = $all_product_count;
+                    $all_product->updated_at = $now;
+                    $all_product->save(false);
+                }
+            } else {
+                if(!$delete){
+                    $k = 'production have '.$old_count;
+                    $all_product = new AllProducts();
+                    $all_product->product_code = $product_code;
+                    $all_product->count = $count;
+                    $all_product->day = $day;
+                    $all_product->created_at = $now;
+                    $all_product->updated_at = $now;
+                    $all_product->save(false);
+                }
+                else{
+                    $k = 'all_product and production not have '.$old_count;
+                }
+            }
+            // debug($k);
         }
         return $this->redirect(Yii::$app->request->referrer);
     }
@@ -185,9 +224,30 @@ class ProductsController extends Controller
             $price = $_POST['price'][$product_code];
             $buy = $_POST['buy'][$product_code];
             $return = $_POST['return'][$product_code];
-            $all_sum = ($buy - $return) * $price;
+            $last_buy = $buy - $return;
+            $all_sum = $last_buy * $price;
             $all_sum1 += $all_sum;
             $selling = Sellings::find()->where(['id' => $selling_id])->one();
+            $all_product = AllProducts::find()->where(['product_code' => $product_code, 'day' => $day])->one();
+            if($all_product){
+                $diff = $all_product->count - $last_buy;
+                if($selling){
+                    $last_buy = $buy - $return;
+                    $last_selling_buy = $selling->buy - $selling->return;
+                    $dif_last_buy = $last_buy - $last_selling_buy;
+                    $diff = $all_product->count - $dif_last_buy;
+                    $all_product->count = $diff;
+                    $all_product->updated_at = $now;
+                }
+                else{
+                    $all_product->count = $diff;
+                    $all_product->updated_at = $now;
+                }
+                if($diff < 0){
+                    debug($product_code." bazada yetarli emas!!!");
+                }
+                $all_product->save(false);
+            }
             if ($selling) {
                 $selling->buy = $buy;
                 $selling->return = $return;
@@ -294,12 +354,11 @@ class ProductsController extends Controller
         $now = date('Y-m-d H:i:s');
         foreach ($all as $loan_id => $given_sum) {
             $loans_calc = LoansCalc::find()->where(['loan_id' => $loan_id, 'day' => $day])->one();
-            if($loans_calc){
+            if ($loans_calc) {
                 $loans_calc->given_sum = $given_sum;
                 $loans_calc->updated_at = $now;
                 $loans_calc->save(false);
-            }
-            else{
+            } else {
                 $loans_calc = new LoansCalc();
                 $loans_calc->loan_id = $loan_id;
                 $loans_calc->given_sum = $given_sum;
@@ -308,6 +367,52 @@ class ProductsController extends Controller
                 $loans_calc->updated_at = $now;
                 $loans_calc->save(false);
             }
+        }
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+    public function actionSaveKassa()
+    {
+        $kassa_sum = $_POST['kassa'];
+        $now = date('Y-m-d H:i:s');
+        $day = $_POST['day'];
+        $kassa = Kassa::find()->where(['day' => $day])->one();
+        if(!$kassa){
+            $kassa = new Kassa();
+            $kassa->sum = $kassa_sum;
+            $kassa->day = $day;
+            $kassa->created_at = $now;
+            $kassa->updated_at = $now;
+            $kassa->save(false);
+        }
+        else{
+            $kassa->sum = $kassa_sum;
+            $kassa->updated_at = $now;
+            $kassa->save(false);
+        }
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    public function actionSaveInvest()
+    {
+        $invest_sum = $_POST['invest'];
+        $now = date('Y-m-d H:i:s');
+        $day = $_POST['day'];
+        $comment = $_POST['comment'];
+        $invest = Investment::find()->where(['day' => $day])->one();
+        if(!$invest){
+            $invest = new Investment();
+            $invest->sum = $invest_sum;
+            $invest->day = $day;
+            $invest->comment = $comment;
+            $invest->created_at = $now;
+            $invest->updated_at = $now;
+            $invest->save(false);
+        }
+        else{
+            $invest->sum = $invest_sum;
+            $invest->comment = $comment;
+            $invest->updated_at = $now;
+            $invest->save(false);
         }
         return $this->redirect(Yii::$app->request->referrer);
     }

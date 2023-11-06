@@ -15,7 +15,7 @@ class m231005_080839_create_all_products_table extends Migration
         $this->createTable('all_products', [
             'id' => $this->primaryKey(),
             'product_code' => $this->string(50)->notNull(),
-            'count' => $this->integer(),
+            'count' => $this->float(),
             'day' => $this->date(),
             'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime()
