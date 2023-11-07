@@ -13,7 +13,8 @@
         echo "<th style=width:15%;' class='hor-center ver-middle'>Soni</th>";
         echo "</tr>";
         $t = 1;
-        foreach ($model->allProducts as $all_product) {
+        $all_products = $model->allProducts ? $model->allProducts : $model->lastAllProduct();
+        foreach ($all_products as $all_product) {
             echo "<tr>";
             echo "<td class='hor-center ver-middle'>" . $t . "</td>";
             echo "<td class='ver-middle'>" . $all_product->product->name . "</td>";

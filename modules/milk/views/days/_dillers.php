@@ -23,7 +23,7 @@
             foreach ($products as $product) {
                 $selling = $diller->getSelling($product->code, $model->day);
                 echo "<td class='hor-center ver-middle'>";
-                echo $selling ? $selling->buy : 0;
+                echo $selling ? $selling->buy - $selling->return : 0;
                 echo "</td>";
             }
             echo "<td style='width:5%;' class='hor-center ver-middle'><a href='?r=milk/days/diller-view&id=" . $diller->id . "&day_id=" . $model->id . "' class='btn btn-sm btn-info'>Ko'rish</a></td>";

@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 
+$status = $model->status;
+
 ?>
 <div class="card" id="loans">
     <div class="card-header">
@@ -12,8 +14,8 @@ use yii\helpers\Html;
     <div class="card-body">
         <?php
         // debug($loans);
-        echo Html::beginForm(['/milk/products/save-loans',], 'post',);
-        echo "<input type='hidden'name='day' class='form-control' value='" . $model->day . "' />";
+        echo $status ? Html::beginForm(['/milk/products/save-loans',], 'post',) : "";
+        echo $status ? "<input type='hidden'name='day' class='form-control' value='" . $model->day . "' />" : "";
         echo "<table class='table table-bordered table-hover'>";
         echo "<tr>";
         echo "<th style='width:2%;' class='hor-center ver-middle'>#</th>";
@@ -33,7 +35,7 @@ use yii\helpers\Html;
                 $loans_calc_sum += $loansCalc->given_sum;
                 $loans_calc_str .= " + " . numberFormat($loansCalc->given_sum, 0);
             }
-            echo "<input type='hidden'name='loan_id[]' class='form-control' value='" . $loan->id . "' />";
+            echo $status ? "<input type='hidden'name='loan_id[]' class='form-control' value='" . $loan->id . "' />" : "";
             $expense = $loan->expense;
             $value_given_sum = $loan->getLoansCalc($model->day) ? $loan->getLoansCalc($model->day)->given_sum : 0;
             echo "<tr>";
@@ -43,14 +45,16 @@ use yii\helpers\Html;
             echo "<td class='hor-center'>" . numberFormat($expense->sum, 0) . "</td>";
             echo "<td class='hor-center'>" . numberFormat($expense->all_sum, 0) . "</td>";
             echo "<td class='hor-center'>" . numberFormat($expense->given_sum, 0) . " " . $loans_calc_str . "</td>";
-            echo "<td class='hor-center'><input type='number' name='given_sum[" . $loan->id . "]' step='1' min='1' max='" . $loan->loan_sum . "' class='form-control' value='" . $value_given_sum . "' /></td>";
+            echo "<td class='hor-center'>";
+            echo $status ? "<input type='number' name='given_sum[" . $loan->id . "]' step='1' min='1' max='" . $loan->loan_sum . "' class='form-control' value='" . $value_given_sum . "' />" : numberFormat($value_given_sum,0);
+            echo "</td>";
             echo "<td class='hor-center'>" . numberFormat($loan->loan_sum - $loans_calc_sum, 0) . "</td>";
             echo "</tr>";
             $l++;
         }
         echo "</table>";
-        echo Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']);
-        echo Html::endForm();
+        echo $status ? Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']) : "";
+        echo $status ? Html::endForm() : "";
         ?>
     </div>
 </div>

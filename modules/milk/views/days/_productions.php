@@ -20,6 +20,7 @@ use yii\helpers\Html;
             'size' => 'modal-lg'
         ]);
         echo Html::beginForm(['/milk/products/save-production',], 'post',);
+        echo "<input type='hidden'name='day' class='form-control' value='" . $model->day . "' />";
         echo "<table class='table table-bordered  table-hover '>";
         echo "<tr>";
         echo "<th style=width:3%;' class='hor-center ver-middle'>#</th>";
@@ -47,7 +48,7 @@ use yii\helpers\Html;
         echo Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']);
         echo Html::endForm();
         Modal::end();
-        echo "<button class='btn btn-primary'  data-toggle='modal' data-target='#your-modal-production'><i class='fas fa-plus'></i></button><br><br>";
+        echo $model->status == true ? "<button class='btn btn-primary'  data-toggle='modal' data-target='#your-modal-production'><i class='fas fa-plus'></i></button><br><br>" : "";
         echo "<table class='table table-bordered  table-hover '>";
         echo "<tr>";
         echo "<th style=width:3%;' class='hor-center ver-middle'>#</th>";

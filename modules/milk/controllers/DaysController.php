@@ -86,8 +86,10 @@ class DaysController extends Controller
         $loans = Loans::find()->alias('l')->where([
             'or',
             ['in', 'l.id', LoansCalc::find()->alias('lc')->select('lc.loan_id')->where('l.loan_sum > lc.given_sum')],
-            ['not in', 'l.id', LoansCalc::find()->alias('lcc')->select('lcc.loan_id')]
+            ['not in', 'l.id', LoansCalc::find()->alias('lcc')->select('lcc.loan_id')],
+            ['in', 'l.id',LoansCalc::find()->alias('lc')->select('lc.loan_id')->where(['lc.day' => $day->day])]
         ])->orderBy(['l.loan_sum' => SORT_DESC])->all();
+        // $loans = Loans::find()->alias('l')->where(['in', 'l.id',LoansCalc::find()->alias('lc')->select('lc.loan_id')->where(['lc.day' => $day->day])])->orderBy(['l.loan_sum' => SORT_DESC])->all();
         return $this->render('view', [
             'model' => $day,
             'products' => $products,
@@ -207,9 +209,10 @@ class DaysController extends Controller
     public function actionDillerView($id, $day_id)
     {
         $diller = Dillers::findOne($id);
+        $day_model = Days::findOne($day_id);
         return $this->render('diller-view', [
             'diller' => $diller,
-            'day_id' => $day_id,
+            'day_model' => $day_model,
         ]);
     }
 }

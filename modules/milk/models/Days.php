@@ -129,4 +129,11 @@ class Days extends \yii\db\ActiveRecord
         $day = Days::find()->where(['status' => true])->orderBy(['day' => SORT_DESC])->one();
         return $day ? $day->day : '2020-01-01';
     }
+
+    public function lastAllProduct()
+    {
+        $old_day = date('Y-m-d', strtotime('-1 days', strtotime($this->day)));
+        $model = AllProducts::find()->where(['day' => $old_day])->all();
+        return $model;
+    }
 }

@@ -148,7 +148,7 @@ class ProductsController extends Controller
     public function actionSaveProduction()
     {
         $product_codes = $_POST['product_code'];
-        $day = Days::getOpenDay();
+        $day = $_POST['day'];
         $now = date('Y-m-d H:i:s');
         foreach ($product_codes as $product_code) {
             $production = Productions::findOne($_POST['production_id'][$product_code]);
@@ -214,7 +214,7 @@ class ProductsController extends Controller
 
     public function actionSaveSellings()
     {
-        $day = Days::getOpenDay();
+        $day = $_POST['day'];
         $now = date('Y-m-d H:i:s');
         $product_codes = $_POST['product_code'];
         $diller_id = $_POST['diller_id'];
@@ -293,55 +293,62 @@ class ProductsController extends Controller
     public function actionSaveExpenses()
     {
         // debug($_POST);
-        $day = Days::getOpenDay();
+        $day = $_POST['day'];
         $now = date('Y-m-d H:i:s');
+        $arr_expense = [];
         foreach ($_POST['multipleinput'] as $key => $array) {
             $expense_code = $array['expense_code'];
-            $count = $array['count'];
-            $price = $array['price'];
-            $given_sum = $array['given_sum'];
-            $all_sum = $count * $price;
-            $loan_sum = $all_sum - $given_sum;
-            $expense = Expenses::find()->where(['expense_code' => $expense_code, 'day' => $day])->one();
-            if ($expense) {
-                $expense->sum = $price;
-                $expense->count = $count;
-                $expense->all_sum = $all_sum;
-                $expense->given_sum = $given_sum;
-                $expense->updated_at = $now;
-            } else {
-                $expense = new Expenses();
-                $expense->expense_code = $expense_code;
-                $expense->sum = $price;
-                $expense->day = $day;
-                $expense->count = $count;
-                $expense->all_sum = $all_sum;
-                $expense->given_sum = $given_sum;
-                $expense->created_at = $now;
-                $expense->updated_at = $now;
-            }
-            $expense->save(false);
-            $loan = Loans::find()->where(['expense_id' => $expense->id])->one();
-            if ($loan) {
-                if ($loan_sum > 0) {
-                    $loan->loan_sum = $loan_sum;
-                    $loan->updated_at = $now;
-                    $loan->save(false);
-                } elseif ($loan_sum == 0) {
-                    foreach ($loan->loansCalcs as $loanCalcs) {
-                        $loanCalcs->delete();
+            if(!in_array($expense_code,$arr_expense)){
+                $arr_expense[] = $expense_code;
+                $count = $array['count'];
+                $price = $array['price'];
+                $given_sum = $array['given_sum'];
+                $all_sum = $count * $price;
+                $loan_sum = $all_sum - $given_sum;
+                $expense = Expenses::find()->where(['expense_code' => $expense_code, 'day' => $day])->one();
+                if ($expense) {
+                    $expense->sum = $price;
+                    $expense->count = $count;
+                    $expense->all_sum = $all_sum;
+                    $expense->given_sum = $given_sum;
+                    $expense->updated_at = $now;
+                } else {
+                    $expense = new Expenses();
+                    $expense->expense_code = $expense_code;
+                    $expense->sum = $price;
+                    $expense->day = $day;
+                    $expense->count = $count;
+                    $expense->all_sum = $all_sum;
+                    $expense->given_sum = $given_sum;
+                    $expense->created_at = $now;
+                    $expense->updated_at = $now;
+                }
+                $expense->save(false);
+                $loan = Loans::find()->where(['expense_id' => $expense->id])->one();
+                if ($loan) {
+                    if ($loan_sum > 0) {
+                        $loan->loan_sum = $loan_sum;
+                        $loan->updated_at = $now;
+                        $loan->save(false);
+                    } elseif ($loan_sum == 0) {
+                        foreach ($loan->loansCalcs as $loanCalcs) {
+                            $loanCalcs->delete();
+                        }
+                        $loan->delete();
                     }
-                    $loan->delete();
+                } else {
+                    if ($loan_sum > 0) {
+                        $loan = new Loans();
+                        $loan->expense_id = $expense->id;
+                        $loan->loan_sum = $loan_sum;
+                        $loan->created_at = $now;
+                        $loan->updated_at = $now;
+                        $loan->save(false);
+                    }
                 }
-            } else {
-                if ($loan_sum > 0) {
-                    $loan = new Loans();
-                    $loan->expense_id = $expense->id;
-                    $loan->loan_sum = $loan_sum;
-                    $loan->created_at = $now;
-                    $loan->updated_at = $now;
-                    $loan->save(false);
-                }
+            }
+            else{
+                continue;
             }
         }
         return $this->redirect(Yii::$app->request->referrer);

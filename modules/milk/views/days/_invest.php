@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 
+$status = $model->status;
+
 ?>
 <div class="card" id="investment">
     <div class="card-header">
@@ -13,8 +15,8 @@ use yii\helpers\Html;
         <?php
         $value_invest = $model->investment ? $model->investment->sum : 0;
         $value_comment = $model->investment ? $model->investment->comment : "";
-        echo Html::beginForm(['/milk/products/save-invest',], 'post');
-        echo "<input type='hidden'name='day' class='form-control' value='" . $model->day . "' />";
+        echo $status ? Html::beginForm(['/milk/products/save-invest',], 'post') : "";
+        echo $status ? "<input type='hidden'name='day' class='form-control' value='" . $model->day . "' />" : "";
         echo "<table class='table table-bordered  table-hover '>";
         echo "<tr>";
         echo "<th style=width:3%;' class='hor-center ver-middle'>#</th>";
@@ -25,12 +27,16 @@ use yii\helpers\Html;
         echo "<tr>";
         echo "<td style=width:3%;' class='hor-center ver-middle'>1</td>";
         echo "<td class='hor-center ver-middle'>" . date('d.m.Y', strtotime($model->day)) . "</td>";
-        echo "<td class='hor-center ver-middle'><input value='" . $value_invest . "' type='number' required name='invest' step='1' min='1'  class='form-control'  /></td>";
-        echo "<td class='hor-center ver-middle'><textarea rows='1' placeholder='Izoh kiriting ...' name='comment' class='form-control'  >" . $value_comment . "</textarea></td>";
+        echo "<td class='hor-center ver-middle'>";
+        echo $status ? "<input value='" . $value_invest . "' type='number' required name='invest' step='1' min='1'  class='form-control'  />" : numberFormat($value_invest,0);
+        echo "</td>";
+        echo "<td class=' ver-middle'>";
+        echo $status ? "<textarea rows='1' placeholder='Izoh kiriting ...' name='comment' class='form-control'  >" . $value_comment . "</textarea>" : $value_comment;
+        echo "</td>";
         echo "</tr>";
         echo "</table>";
-        echo Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']);
-        echo Html::endForm();
+        echo $status ? Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']) : "";
+        echo $status ? Html::endForm() : "";
         ?>
     </div>
 </div>

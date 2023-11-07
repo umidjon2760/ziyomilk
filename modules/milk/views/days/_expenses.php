@@ -3,6 +3,8 @@
 use unclead\multipleinput\MultipleInput;
 use yii\helpers\Html;
 
+$status = $model->status;
+
 ?>
 <div class="card" id="xarajatlar">
     <div class="card-header">
@@ -13,8 +15,8 @@ use yii\helpers\Html;
     <div class="card-body">
         <?php
         echo Html::beginForm(['/milk/products/save-expenses',], 'post',);
-
-        echo MultipleInput::widget([
+        echo $status ? "<input type='hidden'name='day' class='form-control' value='" . $model->day . "' />" : "";
+        echo $status ? MultipleInput::widget([
             'max' => 50,
             'min' => 1,
             'data' => $data,
@@ -46,20 +48,37 @@ use yii\helpers\Html;
                     'title' => 'Berilgan summa',
                 ],
             ],
-        ]);
-        echo Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']);
+        ]) : "";
+        echo $status ? Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']) : "";
         echo Html::endForm();
-        echo "<br><table class='table table-bordered table-hover'>";
-        echo "<tr>";
-        echo "<th style='width:2%;' class='hor-center ver-middle'>#</th>";
-        echo "<th class='hor-center ver-middle'>Xarajat nomi</th>";
-        echo "<th style='width:8%;' class='hor-center ver-middle'>Soni</th>";
-        echo "<th style='width:12%;' class='hor-center ver-middle'>Narxi</th>";
-        echo "<th style='width:12%;' class='hor-center ver-middle'>Jami summa</th>";
-        echo "<th style='width:12%;' class='hor-center ver-middle'>Berilgan summa</th>";
-        echo "<th style='width:12%;' class='hor-center ver-middle'>Qarz</th>";
-        echo "</tr>";
-        echo "</table>";
+        $str = "";
+        $str .= "<table class='table table-bordered table-hover'>";
+        $str .= "<tr>";
+        $str .= "<th style='width:2%;' class='hor-center ver-middle'>#</th>";
+        $str .= "<th class='hor-center ver-middle'>Xarajat nomi</th>";
+        $str .= "<th style='width:8%;' class='hor-center ver-middle'>Soni</th>";
+        $str .= "<th style='width:12%;' class='hor-center ver-middle'>Narxi</th>";
+        $str .= "<th style='width:12%;' class='hor-center ver-middle'>Jami summa</th>";
+        $str .= "<th style='width:12%;' class='hor-center ver-middle'>Berilgan summa</th>";
+        $str .= "<th style='width:12%;' class='hor-center ver-middle'>Qarz</th>";
+        $str .= "</tr>";
+        $t = 1;
+        if(!$status){
+            foreach ($model->expenses as $expense) {
+                $str .= "<tr>";
+                $str .= "<td class='hor-center ver-middle'>".$t."</td>";
+                $str .= "<td>".$expense->expenseCode->name."</td>";
+                $str .= "<td class='hor-center ver-middle'>".$expense->count."</td>";
+                $str .= "<td class='hor-center ver-middle'>".numberFormat($expense->sum,0)."</td>";
+                $str .= "<td class='hor-center ver-middle'>".numberFormat($expense->all_sum,0)."</td>";
+                $str .= "<td class='hor-center ver-middle'>".numberFormat($expense->given_sum,0)."</td>";
+                $str .= "<td class='hor-center ver-middle'>".numberFormat($expense->all_sum - $expense->given_sum,0)."</td>";
+                $str .= "</tr>";
+                $t++;
+            }
+        }
+        $str .= "</table>";
+        echo !$status ? $str : "";
         ?>
     </div>
 </div>
