@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'day')->widget(\kartik\date\DatePicker::classname(), [
+    <?= $form->field($model, 'day')->widget(\kartik\date\DatePicker::class, [
         'pickerIcon' => '<i class="fas fa-calendar-alt text-primary"></i>',
         'removeIcon' => '<i class="fas fa-trash text-danger"></i>',
         'options' => [
@@ -36,7 +36,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'status')->checkbox(['checked' => $model ? $model->status : true]) ?>
 
-    <?= $form->field($model, 'created_at')->textInput(['value' => ($model ? $model->created_at : date('Y-m-d H:i:s'))]) ?>
+    <?= $form->field($model, 'created_at')->textInput(['value' => $model ? $model->created_at : date('Y-m-d H:i:s')]) ?>
 
     <?= $form->field($model, 'updated_at')->textInput(['value' => date('Y-m-d H:i:s')]) ?>
 

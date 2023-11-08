@@ -39,6 +39,7 @@ class Days extends \yii\db\ActiveRecord
             [['day', 'created_at', 'updated_at'], 'safe'],
             [['status'], 'integer'],
             [['day'], 'unique'],
+            [['day'], 'required'],
         ];
     }
 

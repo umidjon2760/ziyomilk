@@ -362,19 +362,24 @@ class ProductsController extends Controller
         $all = $_POST['given_sum'];
         $now = date('Y-m-d H:i:s');
         foreach ($all as $loan_id => $given_sum) {
-            $loans_calc = LoansCalc::find()->where(['loan_id' => $loan_id, 'day' => $day])->one();
-            if ($loans_calc) {
-                $loans_calc->given_sum = $given_sum;
-                $loans_calc->updated_at = $now;
-                $loans_calc->save(false);
-            } else {
-                $loans_calc = new LoansCalc();
-                $loans_calc->loan_id = $loan_id;
-                $loans_calc->given_sum = $given_sum;
-                $loans_calc->day = $day;
-                $loans_calc->created_at = $now;
-                $loans_calc->updated_at = $now;
-                $loans_calc->save(false);
+            if($given_sum > 0){
+                $loans_calc = LoansCalc::find()->where(['loan_id' => $loan_id, 'day' => $day])->one();
+                if ($loans_calc) {
+                    $loans_calc->given_sum = $given_sum;
+                    $loans_calc->updated_at = $now;
+                    $loans_calc->save(false);
+                } else {
+                    $loans_calc = new LoansCalc();
+                    $loans_calc->loan_id = $loan_id;
+                    $loans_calc->given_sum = $given_sum;
+                    $loans_calc->day = $day;
+                    $loans_calc->created_at = $now;
+                    $loans_calc->updated_at = $now;
+                    $loans_calc->save(false);
+                }
+            }
+            else{
+                continue;
             }
         }
         return $this->redirect(Yii::$app->request->referrer);

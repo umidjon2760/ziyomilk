@@ -31,7 +31,7 @@ $status = $model->status;
         echo "</tr>";
         echo "<tr>";
         echo "<td style=width:3%;' class='hor-center ver-middle'>2</td>";
-        echo "<td class='hor-center ver-middle'>" . date('d.m.Y', strtotime($model->day)) . "</td>";
+        echo "<td class='hor-center ver-middle'>" . date('d.m.Y', strtotime($model->day)) . " kun oxiriga</td>";
         echo "<td style=width:40%;' class='hor-center ver-middle'>";
         echo $status ? "<input value='" . $value_kassa . "' type='number' required name='kassa' step='1' min='1'  class='form-control'  />" : numberFormat($value_kassa,0);
         echo "</td>";

@@ -2,6 +2,7 @@
 
 namespace app\modules\milk\controllers;
 
+use app\modules\milk\models\AllProducts;
 use app\modules\milk\models\Days;
 use app\modules\milk\models\DaysSearch;
 use app\modules\milk\models\Dillers;
@@ -18,6 +19,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 
 /**
  * DaysController implements the CRUD actions for Days model.
@@ -38,6 +40,7 @@ class DaysController extends Controller
                     'actions' => [
                         'delete' => ['POST'],
                         'close-day' => ['POST'],
+                        'check-close-day' => ['POST'],
                     ],
                 ],
             ]
@@ -66,7 +69,7 @@ class DaysController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id,$type = 1)
+    public function actionView($id, $type = 1)
     {
         $day = $this->findModel($id);
         $products = Products::find()->where(['status' => true])->all();
@@ -91,7 +94,7 @@ class DaysController extends Controller
             'or',
             ['in', 'l.id', LoansCalc::find()->alias('lc')->select('lc.loan_id')->where('l.loan_sum > lc.given_sum')],
             ['not in', 'l.id', LoansCalc::find()->alias('lcc')->select('lcc.loan_id')],
-            ['in', 'l.id',LoansCalc::find()->alias('lc')->select('lc.loan_id')->where(['lc.day' => $day->day])]
+            ['in', 'l.id', LoansCalc::find()->alias('lc')->select('lc.loan_id')->where(['lc.day' => $day->day])]
         ])->orderBy(['l.loan_sum' => SORT_DESC])->all();
         // $loans = Loans::find()->alias('l')->where(['in', 'l.id',LoansCalc::find()->alias('lc')->select('lc.loan_id')->where(['lc.day' => $day->day])])->orderBy(['l.loan_sum' => SORT_DESC])->all();
         return $this->render('view', [
@@ -115,8 +118,78 @@ class DaysController extends Controller
         $model = new Days();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            $old_day = Days::find()->max('day');
+            if ($model->load($this->request->post())) {
+                if ($model->save()) {
+                    $now = date('Y-m-d H:i:s');
+                    $new_day = $model->day;
+                    // yangi kun ochilyotganda dillerlarga yangi kunga eski qarzlarni yozish
+                    // yangi kun ochilyotganda eski kundegi barcha maxsulotlarni yangi kunga yozib qo'yish kerak
+                    // yangi kun ochilyotganda eski kundegi kassadagi pullarni yangi kunga old_day_sum ga yozib qo'yish kerak
+                    $dillers_calc = DillersCalc::find()->where(['day' => $old_day])->all();
+                    foreach($dillers_calc as $diller_calc){
+                        $new_loan_sum = $diller_calc->loan_sum + $diller_calc->old_loan_sum;
+                        $new_diller_calc = DillersCalc::find()->where(['diller_id' => $diller_calc->diller_id,'day' => $new_day])->one();
+                        if($new_diller_calc){
+                            $new_diller_calc->given_sum = 0;
+                            $new_diller_calc->loan_sum = 0;
+                            $new_diller_calc->old_loan_sum = $new_loan_sum;
+                            $new_diller_calc->all_sum = 0;
+                            $new_diller_calc->day = $new_day;
+                            $new_diller_calc->updated_at = $now;
+                            $new_diller_calc->save(false);
+                        }
+                        else{
+                            $new_diller_calc = new DillersCalc();
+                            $new_diller_calc->diller_id = $diller_calc->diller_id;
+                            $new_diller_calc->given_sum = 0;
+                            $new_diller_calc->loan_sum = 0;
+                            $new_diller_calc->old_loan_sum = $new_loan_sum;
+                            $new_diller_calc->all_sum = 0;
+                            $new_diller_calc->day = $new_day;
+                            $new_diller_calc->created_at = $now;
+                            $new_diller_calc->updated_at = $now;
+                            $new_diller_calc->save(false);
+                        }
+                    }
+                    $all_products = AllProducts::find()->where(['day'=>$old_day])->all();
+                    foreach($all_products as $all_product){
+                        $new_all_product = AllProducts::find()->where(['product_code' => $all_product->product_code,'day'=>$new_day])->one();
+                        if($new_all_product){
+                            $new_all_product->count = $all_product->count;
+                            $new_all_product->updated_at = $now;
+                            $new_all_product->save(false);
+                        }
+                        else{
+                            $new_all_product = new AllProducts();
+                            $new_all_product->product_code = $all_product->product_code;
+                            $new_all_product->count = $all_product->count;
+                            $new_all_product->day = $new_day;
+                            $new_all_product->created_at = $now;
+                            $new_all_product->updated_at = $now;
+                            $new_all_product->save(false);
+                        }
+                    }
+                    $kassa = Kassa::find()->where(['day' => $old_day])->one();
+                    if($kassa){
+                        $new_kassa = Kassa::find()->where(['day' => $new_day])->one();
+                        if($new_kassa){
+                            $new_kassa->old_day_sum = $kassa->sum;
+                            $new_kassa->updated_at = $now;
+                            $new_kassa->save(false);
+                        }
+                        else{
+                            $new_kassa = new Kassa();
+                            $new_kassa->day = $new_day;
+                            $new_kassa->sum = 0;
+                            $new_kassa->old_day_sum = $kassa->sum;
+                            $new_kassa->created_at = $now;
+                            $new_kassa->updated_at = $now;
+                            $new_kassa->save(false);
+                        }
+                    }
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -220,35 +293,31 @@ class DaysController extends Controller
         ]);
     }
 
-    public function actionCloseDay()
+    public function actionCheckCloseDay()
     {
         $day = $_POST['day'];
-        // $dillers_calc = DillersCalc::find()->where(['day' => $day])->all();
-        // yangi kun ochilyotganda dillerlarga yangi kunga eski qarzlarni yozish
-        // yangi kun ochilyotganda eski kundegi barcha maxsulotlarni yangi kunga yozib qo'yish kerak
-        // yangi kun ochilyotganda eski kundegi kassadagi pullarni yangi kunga old_day_sum ga yozib qo'yish kerak
 
-        $sql_diller_all_given = "SELECT sum(given_sum) all_given_sum from dillers_calc where day='".$day."'";
+        $sql_diller_all_given = "SELECT sum(given_sum) all_given_sum from dillers_calc where day='" . $day . "'";
         $row_diller_all_given = Yii::$app->db->createCommand($sql_diller_all_given)->queryOne();
         $diller_all_given_sum = $row_diller_all_given['all_given_sum'];
 
-        $sql_expense_all_given = "SELECT sum(given_sum) all_given_sum from expenses where day='".$day."'";
+        $sql_expense_all_given = "SELECT sum(given_sum) all_given_sum from expenses where day='" . $day . "'";
         $row_expense_all_given = Yii::$app->db->createCommand($sql_expense_all_given)->queryOne();
         $expense_all_given_sum = $row_expense_all_given['all_given_sum'];
 
-        $sql_loan_all_given = "SELECT sum(given_sum) all_given_sum from loans_calc where day='".$day."'";
+        $sql_loan_all_given = "SELECT sum(given_sum) all_given_sum from loans_calc where day='" . $day . "'";
         $row_loan_all_given = Yii::$app->db->createCommand($sql_loan_all_given)->queryOne();
         $loan_all_given_sum = $row_loan_all_given['all_given_sum'];
 
-        $sql_investment = "SELECT sum(sum) sum from investment where day='".$day."'";
+        $sql_investment = "SELECT sum(sum) sum from investment where day='" . $day . "'";
         $row_investment = Yii::$app->db->createCommand($sql_investment)->queryOne();
         $investment_sum = $row_investment['sum'];
 
-        $sql_investment = "SELECT sum(sum) sum from investment where day='".$day."'";
+        $sql_investment = "SELECT sum(sum) sum from investment where day='" . $day . "'";
         $row_investment = Yii::$app->db->createCommand($sql_investment)->queryOne();
         $investment_sum = $row_investment['sum'];
 
-        $kassa = Kassa::find()->where(['day'=>$day])->one();
+        $kassa = Kassa::find()->where(['day' => $day])->one();
         $old_kassa = $kassa->old_day_sum;
         $now_kassa = $kassa->sum;
 
@@ -256,51 +325,67 @@ class DaysController extends Controller
         $all_minus_sum = $expense_all_given_sum + $loan_all_given_sum;
         $all_calc_sum = $all_sum - $all_minus_sum;
         $str = "";
-        $str .= "<table class='table table-bordered'>";
+        $str .= "<table class='table table-bordered table-sm'>";
         $str .= "<tr>";
         $str .= "<td>Bugun dillerlar bergan barcha pullar</td>";
-        $str .= "<td>".numberFormat($diller_all_given_sum,0)."</td>";
+        $str .= "<td>" . numberFormat($diller_all_given_sum, 0) . "</td>";
         $str .= "</tr>";
         $str .= "<tr>";
         $str .= "<td>Bugun xarajatga ishlatilgan barcha pullar</td>";
-        $str .= "<td>".numberFormat($expense_all_given_sum,0)."</td>";
+        $str .= "<td>" . numberFormat($expense_all_given_sum, 0) . "</td>";
         $str .= "</tr>";
         $str .= "<tr>";
         $str .= "<td>Bugun qarzlarga berilgan pullar</td>";
-        $str .= "<td>".numberFormat($loan_all_given_sum,0)."</td>";
+        $str .= "<td>" . numberFormat($loan_all_given_sum, 0) . "</td>";
         $str .= "</tr>";
         $str .= "<tr>";
         $str .= "<td>Investitsiya</td>";
-        $str .= "<td>".numberFormat($investment_sum,0)."</td>";
+        $str .= "<td>" . numberFormat($investment_sum, 0) . "</td>";
         $str .= "</tr>";
         $str .= "<tr>";
         $str .= "<td>Kechagi kassadagi pul</td>";
-        $str .= "<td>".numberFormat($old_kassa,0)."</td>";
+        $str .= "<td>" . numberFormat($old_kassa, 0) . "</td>";
         $str .= "</tr>";
         $str .= "<tr>";
         $str .= "<td>Hozirgi kassadagi pul</td>";
-        $str .= "<td>".numberFormat($now_kassa,0)."</td>";
+        $str .= "<td>" . numberFormat($now_kassa, 0) . "</td>";
         $str .= "</tr>";
         $str .= "</table>";
-        if($all_calc_sum == $now_kassa){
-            $str .= "Barchasi to'g'ri";
-        }
-        elseif($all_calc_sum < 0){
-            $str .= "Qo'lingizda mavjud bo'lgan summadan '".$all_calc_sum."' so'm ko'p miqdorda harajat va qarzga ishlatgansiz, bunday bo'lishi mumkin emas!!!";
-        }
-        elseif($all_calc_sum > $now_kassa){
+        $check = false;
+        if ($all_calc_sum == $now_kassa) {
+            $str .= "Barchasi to'g'ri, kunni yopishingiz mumkin.";
+            $check = true;
+        } elseif ($all_calc_sum < 0) {
+            $str .= "Qo'lingizda mavjud bo'lgan summadan '" . $all_calc_sum . "' so'm ko'p miqdorda harajat va qarzga ishlatgansiz, xarajat va qarzlaringizni qaytadan tekshiring!!!";
+        } elseif ($all_calc_sum > $now_kassa) {
             $diff = $all_calc_sum - $now_kassa;
-            $str .= "Kassada ".$diff." so'm pul kam!!!";
-        }
-        elseif($all_calc_sum < $now_kassa){
+            $str .= "Kassada " . $diff . " so'm pul kam!!!";
+        } elseif ($all_calc_sum < $now_kassa) {
             $diff = $now_kassa - $all_calc_sum;
-            $str .= "Kassada ".$diff." so'm pul ko'p!!! Qayerdadir xato amaliyot bajargansiz, iltimos qaytadan tekshiring!!!";
-        }
-        else{
+            $str .= "Kassada " . $diff . " so'm pul ko'p!!! Qayerdadir xato amaliyot bajargansiz, iltimos qaytadan tekshiring!!!";
+        } else {
             $str .= "Protsess xato!!!";
+        }
+        if ($check) {
+            $str .= "<br><br>" . Html::a("Kunni yopish", ['/milk/days/close-day', 'day' => $day], [
+                'class' => 'btn btn-danger',
+                'data' => [
+                    'confirm' => 'Barcha xolatlarni tekshirib chiqdingizmi? Kun yopilgandan so\'ng shu kunga boshqa amaliyot bajara olmaysiz. Rozimisiz?',
+                    'method' => 'post',
+                ],
+            ]);
         }
         echo $str;
         exit;
     }
-    
+
+    public function actionCloseDay($day)
+    {
+        $model = Days::find()->where(['day' => $day])->one();
+        if ($model) {
+            $model->status = false;
+            $model->save(false);
+        }
+        return $this->redirect(Yii::$app->request->referrer);
+    }
 }

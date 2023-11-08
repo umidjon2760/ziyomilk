@@ -105,10 +105,11 @@ if($status) :
             'size' => 'modal-md'
         ]);
         echo "<div>";
-        echo "<p>Barcha xolatlarni tekshirib chiqdingizmi? Kun yopilgandan so'ng shu kunga boshqa amaliyot bajara olmaysiz. Rozimisiz?</p>";
+        // echo "<p>Barcha xolatlarni tekshirib chiqdingizmi? Kun yopilgandan so'ng shu kunga boshqa amaliyot bajara olmaysiz. Rozimisiz?</p>";
+        echo "<p>Kun yopishdan avval qilgan amaliyotlaringizni tekshirishing!!!</p>";
         echo "<div id='end_day'>";
         echo "</div>";
-        echo "<button onclick='end_day();' class='btn btn-success'><span class='fas fa-check-circle'></span> Xa</button>";
+        echo "<button id='btn_end_day' onclick='end_day();' class='btn btn-success'><span class='fas fa-check-circle'></span> Tekshirish</button>";
         echo "</div>";
         Modal::end();
         ?>
@@ -154,13 +155,14 @@ if($status) :
     }
     function end_day() {
         $.ajax({
-            url: "?r=milk/days/close-day",
+            url: "?r=milk/days/check-close-day",
             type: "POST",
             data: ({
                 day: '<?=$model->day?>',
                 _csrf: '<?= Yii::$app->request->getCsrfToken() ?>'
             }),
             success: function(data) {
+                document.getElementById("btn_end_day").style.display = "none"
                 document.getElementById("end_day").innerHTML = data
             }
         });
