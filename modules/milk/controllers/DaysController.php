@@ -8,6 +8,7 @@ use app\modules\milk\models\Dillers;
 use app\modules\milk\models\DillersCalc;
 use app\modules\milk\models\Expenses;
 use app\modules\milk\models\ExpenseSpr;
+use app\modules\milk\models\Kassa;
 use app\modules\milk\models\Loans;
 use app\modules\milk\models\LoansCalc;
 use app\modules\milk\models\Productions;
@@ -248,8 +249,57 @@ class DaysController extends Controller
         $investment_sum = $row_investment['sum'];
 
         $kassa = Kassa::find()->where(['day'=>$day])->one();
+        $old_kassa = $kassa->old_day_sum;
+        $now_kassa = $kassa->sum;
 
-        echo $day;
+        $all_sum = $diller_all_given_sum + $investment_sum + $old_kassa;
+        $all_minus_sum = $expense_all_given_sum + $loan_all_given_sum;
+        $all_calc_sum = $all_sum - $all_minus_sum;
+        $str = "";
+        $str .= "<table class='table table-bordered'>";
+        $str .= "<tr>";
+        $str .= "<td>Bugun dillerlar bergan barcha pullar</td>";
+        $str .= "<td>".numberFormat($diller_all_given_sum,0)."</td>";
+        $str .= "</tr>";
+        $str .= "<tr>";
+        $str .= "<td>Bugun xarajatga ishlatilgan barcha pullar</td>";
+        $str .= "<td>".numberFormat($expense_all_given_sum,0)."</td>";
+        $str .= "</tr>";
+        $str .= "<tr>";
+        $str .= "<td>Bugun qarzlarga berilgan pullar</td>";
+        $str .= "<td>".numberFormat($loan_all_given_sum,0)."</td>";
+        $str .= "</tr>";
+        $str .= "<tr>";
+        $str .= "<td>Investitsiya</td>";
+        $str .= "<td>".numberFormat($investment_sum,0)."</td>";
+        $str .= "</tr>";
+        $str .= "<tr>";
+        $str .= "<td>Kechagi kassadagi pul</td>";
+        $str .= "<td>".numberFormat($old_kassa,0)."</td>";
+        $str .= "</tr>";
+        $str .= "<tr>";
+        $str .= "<td>Hozirgi kassadagi pul</td>";
+        $str .= "<td>".numberFormat($now_kassa,0)."</td>";
+        $str .= "</tr>";
+        $str .= "</table>";
+        if($all_calc_sum == $now_kassa){
+            $str .= "Barchasi to'g'ri";
+        }
+        elseif($all_calc_sum < 0){
+            $str .= "Qo'lingizda mavjud bo'lgan summadan '".$all_calc_sum."' so'm ko'p miqdorda harajat va qarzga ishlatgansiz, bunday bo'lishi mumkin emas!!!";
+        }
+        elseif($all_calc_sum > $now_kassa){
+            $diff = $all_calc_sum - $now_kassa;
+            $str .= "Kassada ".$diff." so'm pul kam!!!";
+        }
+        elseif($all_calc_sum < $now_kassa){
+            $diff = $now_kassa - $all_calc_sum;
+            $str .= "Kassada ".$diff." so'm pul ko'p!!! Qayerdadir xato amaliyot bajargansiz, iltimos qaytadan tekshiring!!!";
+        }
+        else{
+            $str .= "Protsess xato!!!";
+        }
+        echo $str;
         exit;
     }
     
