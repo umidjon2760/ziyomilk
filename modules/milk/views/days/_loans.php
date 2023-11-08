@@ -31,26 +31,36 @@ $status = $model->status;
         foreach ($loans as $loan) {
             $loans_calc_sum = 0;
             $loans_calc_str = "";
+            $check_loans_calc = false;
             foreach ($loan->loansCalcs as $loansCalc) {
+                if($loansCalc->day == $model->day){
+                    $check_loans_calc = true;
+                }
                 $loans_calc_sum += $loansCalc->given_sum;
                 $loans_calc_str .= " + " . numberFormat($loansCalc->given_sum, 0);
             }
-            echo $status ? "<input type='hidden'name='loan_id[]' class='form-control' value='" . $loan->id . "' />" : "";
-            $expense = $loan->expense;
-            $value_given_sum = $loan->getLoansCalc($model->day) ? $loan->getLoansCalc($model->day)->given_sum : 0;
-            echo "<tr>";
-            echo "<td>" . $l . "</td>";
-            echo "<td>" . $expense->expenseCode->name . " (" . date('d.m.Y', strtotime($expense->day)) . ")" . "</td>";
-            echo "<td class='hor-center'>" . $expense->count . "</td>";
-            echo "<td class='hor-center'>" . numberFormat($expense->sum, 0) . "</td>";
-            echo "<td class='hor-center'>" . numberFormat($expense->all_sum, 0) . "</td>";
-            echo "<td class='hor-center'>" . numberFormat($expense->given_sum, 0) . " " . $loans_calc_str . "</td>";
-            echo "<td class='hor-center'>";
-            echo $status ? "<input type='number' name='given_sum[" . $loan->id . "]' step='1' min='1' max='" . $loan->loan_sum . "' class='form-control' value='" . $value_given_sum . "' />" : numberFormat($value_given_sum,0);
-            echo "</td>";
-            echo "<td class='hor-center'>" . numberFormat($loan->loan_sum - $loans_calc_sum, 0) . "</td>";
-            echo "</tr>";
-            $l++;
+            $all_loan_sum = $loan->loan_sum - $loans_calc_sum;
+            if($all_loan_sum > 0 || $check_loans_calc){
+                echo $status ? "<input type='hidden'name='loan_id[]' class='form-control' value='" . $loan->id . "' />" : "";
+                $expense = $loan->expense;
+                $value_given_sum = $loan->getLoansCalc($model->day) ? $loan->getLoansCalc($model->day)->given_sum : 0;
+                echo "<tr>";
+                echo "<td>" . $l . "</td>";
+                echo "<td>" . $expense->expenseCode->name . " (" . date('d.m.Y', strtotime($expense->day)) . ")" . "</td>";
+                echo "<td class='hor-center'>" . $expense->count . "</td>";
+                echo "<td class='hor-center'>" . numberFormat($expense->sum, 0) . "</td>";
+                echo "<td class='hor-center'>" . numberFormat($expense->all_sum, 0) . "</td>";
+                echo "<td class='hor-center'>" . numberFormat($expense->given_sum, 0) . " " . $loans_calc_str . "</td>";
+                echo "<td class='hor-center'>";
+                echo $status ? "<input type='number' name='given_sum[" . $loan->id . "]' step='1' min='1' max='" . $loan->loan_sum . "' class='form-control' value='" . $value_given_sum . "' />" : numberFormat($value_given_sum,0);
+                echo "</td>";
+                echo "<td class='hor-center'>" . numberFormat($all_loan_sum, 0) . "</td>";
+                echo "</tr>";
+                $l++;
+            }
+            else{
+                continue;
+            }
         }
         echo "</table>";
         echo $status ? Html::submitButton('<span class="fas fa-check-circle"></span> Saqlash', ['class' => 'submit btn btn-success btn-sm']) : "";

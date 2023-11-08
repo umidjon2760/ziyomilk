@@ -13,6 +13,7 @@ $status = $model->status;
     <div class="card-body">
         <?php
         $value_kassa = $model->kassa ? $model->kassa->sum : 0;
+        $value_old_kassa = $model->kassa ? $model->kassa->old_day_sum : 0;
         echo $status ? Html::beginForm(['/milk/products/save-kassa',], 'post') : "";
         echo $status ? "<input type='hidden'name='day' class='form-control' value='" . $model->day . "' />" : "";
         echo "<table class='table table-bordered  table-hover '>";
@@ -23,6 +24,13 @@ $status = $model->status;
         echo "</tr>";
         echo "<tr>";
         echo "<td style=width:3%;' class='hor-center ver-middle'>1</td>";
+        echo "<td class='hor-center ver-middle'>" . date('d.m.Y', strtotime($model->day)) . " kun boshiga</td>";
+        echo "<td style=width:40%;' class='hor-center ver-middle'>";
+        echo numberFormat($value_old_kassa,0);
+        echo "</td>";
+        echo "</tr>";
+        echo "<tr>";
+        echo "<td style=width:3%;' class='hor-center ver-middle'>2</td>";
         echo "<td class='hor-center ver-middle'>" . date('d.m.Y', strtotime($model->day)) . "</td>";
         echo "<td style=width:40%;' class='hor-center ver-middle'>";
         echo $status ? "<input value='" . $value_kassa . "' type='number' required name='kassa' step='1' min='1'  class='form-control'  />" : numberFormat($value_kassa,0);

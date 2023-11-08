@@ -136,4 +136,11 @@ class Days extends \yii\db\ActiveRecord
         $model = AllProducts::find()->where(['day' => $old_day])->all();
         return $model;
     }
+
+    public function lastKassa()
+    {
+        $old_day = date('Y-m-d', strtotime('-1 days', strtotime($this->day)));
+        $model = Kassa::find()->where(['day' => $old_day])->all();
+        return $model;
+    }
 }

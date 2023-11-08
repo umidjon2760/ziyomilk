@@ -78,7 +78,7 @@ class Dillers extends \yii\db\ActiveRecord
         return $this->hasMany(Sellings::class, ['diller_id' => 'id'])->where('dillers.status = true');
     }
 
-    public function getSelling($product_code,$day)
+    public function getSelling($product_code, $day)
     {
         $model = Sellings::find()->where(['diller_id' => $this->id, 'product_code' => $product_code, 'day' => $day])->one();
         return $model;
@@ -87,5 +87,18 @@ class Dillers extends \yii\db\ActiveRecord
     public function getDillerCalc()
     {
         return $this->hasOne(DillersCalc::class, ['diller_id' => 'id']);
+    }
+
+    public function getDillerCalcByDay($day)
+    {
+        $model = DillersCalc::find()->where(['diller_id' => $this->id, 'day' => $day])->one();
+        return $model;
+    }
+
+    public function getDillerCalcLastDay($day)
+    {
+        $day = date('Y-m-d', strtotime('-1 days', strtotime($day)));
+        $model = DillersCalc::find()->where(['diller_id' => $this->id, 'day' => $day])->one();
+        return $model;
     }
 }

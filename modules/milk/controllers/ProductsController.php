@@ -218,6 +218,7 @@ class ProductsController extends Controller
         $now = date('Y-m-d H:i:s');
         $product_codes = $_POST['product_code'];
         $diller_id = $_POST['diller_id'];
+        $old_loan_sum = $_POST['old_loan_sum'];
         $all_sum1 = 0;
         foreach ($product_codes as $product_code) {
             $selling_id = $_POST['selling_id'][$product_code];
@@ -281,6 +282,7 @@ class ProductsController extends Controller
             $diller_calc->diller_id = $diller_id;
             $diller_calc->given_sum = $given_sum;
             $diller_calc->loan_sum = $loan_sum;
+            $diller_calc->old_loan_sum = $old_loan_sum;
             $diller_calc->all_sum = $all_sum1;
             $diller_calc->day = $day;
             $diller_calc->created_at = $now;

@@ -30,7 +30,7 @@ class Kassa extends \yii\db\ActiveRecord
     {
         return [
             [['day', 'created_at', 'updated_at'], 'safe'],
-            [['sum'], 'number'],
+            [['sum','old_day_sum'], 'number'],
         ];
     }
 
@@ -43,6 +43,7 @@ class Kassa extends \yii\db\ActiveRecord
             'id' => 'ID',
             'day' => 'Day',
             'sum' => 'Sum',
+            'old_day_sum' => 'Old Day Sum',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

@@ -36,7 +36,7 @@ class DillersCalc extends \yii\db\ActiveRecord
         return [
             [['diller_id'], 'required'],
             [['diller_id'], 'integer'],
-            [['given_sum', 'loan_sum', 'all_sum'], 'number'],
+            [['given_sum', 'loan_sum','old_loan_sum', 'all_sum'], 'number'],
             [['day', 'created_at', 'updated_at'], 'safe'],
             [['day'], 'exist', 'skipOnError' => true, 'targetClass' => Days::class, 'targetAttribute' => ['day' => 'day']],
         ];
@@ -52,6 +52,7 @@ class DillersCalc extends \yii\db\ActiveRecord
             'diller_id' => 'Diller ID',
             'given_sum' => 'Given Sum',
             'loan_sum' => 'Loan Sum',
+            'old_loan_sum' => 'Old Loan Sum',
             'all_sum' => 'All Sum',
             'day' => 'Day',
             'created_at' => 'Created At',

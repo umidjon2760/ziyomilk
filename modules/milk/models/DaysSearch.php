@@ -7,9 +7,9 @@ use yii\data\ActiveDataProvider;
 use app\modules\milk\models\Days;
 
 /**
- * DaysSerach represents the model behind the search form of `app\modules\milk\models\Days`.
+ * DaysSearch represents the model behind the search form of `app\modules\milk\models\Days`.
  */
-class DaysSerach extends Days
+class DaysSearch extends Days
 {
     /**
      * {@inheritdoc}

@@ -3,14 +3,16 @@
 namespace app\modules\milk\controllers;
 
 use app\modules\milk\models\Days;
-use app\modules\milk\models\DaysSerach;
+use app\modules\milk\models\DaysSearch;
 use app\modules\milk\models\Dillers;
+use app\modules\milk\models\DillersCalc;
 use app\modules\milk\models\Expenses;
 use app\modules\milk\models\ExpenseSpr;
 use app\modules\milk\models\Loans;
 use app\modules\milk\models\LoansCalc;
 use app\modules\milk\models\Productions;
 use app\modules\milk\models\Products;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -34,6 +36,7 @@ class DaysController extends Controller
                     'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                        'close-day' => ['POST'],
                     ],
                 ],
             ]
@@ -47,7 +50,7 @@ class DaysController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new DaysSerach();
+        $searchModel = new DaysSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -215,4 +218,39 @@ class DaysController extends Controller
             'day_model' => $day_model,
         ]);
     }
+
+    public function actionCloseDay()
+    {
+        $day = $_POST['day'];
+        // $dillers_calc = DillersCalc::find()->where(['day' => $day])->all();
+        // yangi kun ochilyotganda dillerlarga yangi kunga eski qarzlarni yozish
+        // yangi kun ochilyotganda eski kundegi barcha maxsulotlarni yangi kunga yozib qo'yish kerak
+        // yangi kun ochilyotganda eski kundegi kassadagi pullarni yangi kunga old_day_sum ga yozib qo'yish kerak
+
+        $sql_diller_all_given = "SELECT sum(given_sum) all_given_sum from dillers_calc where day='".$day."'";
+        $row_diller_all_given = Yii::$app->db->createCommand($sql_diller_all_given)->queryOne();
+        $diller_all_given_sum = $row_diller_all_given['all_given_sum'];
+
+        $sql_expense_all_given = "SELECT sum(given_sum) all_given_sum from expenses where day='".$day."'";
+        $row_expense_all_given = Yii::$app->db->createCommand($sql_expense_all_given)->queryOne();
+        $expense_all_given_sum = $row_expense_all_given['all_given_sum'];
+
+        $sql_loan_all_given = "SELECT sum(given_sum) all_given_sum from loans_calc where day='".$day."'";
+        $row_loan_all_given = Yii::$app->db->createCommand($sql_loan_all_given)->queryOne();
+        $loan_all_given_sum = $row_loan_all_given['all_given_sum'];
+
+        $sql_investment = "SELECT sum(sum) sum from investment where day='".$day."'";
+        $row_investment = Yii::$app->db->createCommand($sql_investment)->queryOne();
+        $investment_sum = $row_investment['sum'];
+
+        $sql_investment = "SELECT sum(sum) sum from investment where day='".$day."'";
+        $row_investment = Yii::$app->db->createCommand($sql_investment)->queryOne();
+        $investment_sum = $row_investment['sum'];
+
+        $kassa = Kassa::find()->where(['day'=>$day])->one();
+
+        echo $day;
+        exit;
+    }
+    
 }

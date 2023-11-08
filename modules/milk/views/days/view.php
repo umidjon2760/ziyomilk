@@ -1,4 +1,7 @@
 <?php
+
+use yii\bootstrap4\Modal;
+
 $this->title = date('d.m.Y', strtotime($model->day));
 $this->params['breadcrumbs'][] = ['label' => 'Kunlar', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -21,6 +24,7 @@ $arr_width = [
     6 => "width:13%;",
     7 => "width:13%;",
 ];
+$status = $model->status;
 ?>
 <div class="card" id="menu">
     <div class='card-body'>
@@ -28,15 +32,16 @@ $arr_width = [
             <tr>
                 <?php
                 foreach ($arr as $key => $value) {
-                    $style = $type == $key ? "style='background:#17A2B8;".$arr_width[$key]."'" : "style='background-color:white;".$arr_width[$key]."'";
+                    $style = $type == $key ? "style='background:#17A2B8;" . $arr_width[$key] . "'" : "style='background-color:white;" . $arr_width[$key] . "'";
                     $style_a = $type == $key ? "style='color:white;'" : "";
-                    echo '<td '.$style.' class="hor-center ver-middle"><a href="?r=milk/days/view&id='.$model->id.'&type='.$key.'" '.$style_a.'>'.$value.'</a></td>';
+                    echo '<td ' . $style . ' class="hor-center ver-middle"><a href="?r=milk/days/view&id=' . $model->id . '&type=' . $key . '" ' . $style_a . '>' . $value . '</a></td>';
                 }
                 ?>
             </tr>
         </table>
     </div>
 </div>
+
 <?php
 switch ($type) {
     case 1:
@@ -84,7 +89,33 @@ switch ($type) {
         echo "Topilmadi";
         break;
 }
+if($status) :
 ?>
+<div class="card collapsed-card">
+    <div class="card-header">
+        <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+            <h3 class="card-title" style="color:black;">Kun yopish</i>
+        </button>
+    </div>
+    <div class="card-body">
+        <?php
+        Modal::begin([
+            'title' => '<h2>Kun yopish - ' . date('d.m.Y', strtotime($model->day)) . '</h2>',
+            'id' => 'your-modal-end-day',
+            'size' => 'modal-md'
+        ]);
+        echo "<div>";
+        echo "<p>Barcha xolatlarni tekshirib chiqdingizmi? Kun yopilgandan so'ng shu kunga boshqa amaliyot bajara olmaysiz. Rozimisiz?</p>";
+        echo "<div id='end_day'>";
+        echo "</div>";
+        echo "<button onclick='end_day();' class='btn btn-success'><span class='fas fa-check-circle'></span> Xa</button>";
+        echo "</div>";
+        Modal::end();
+        ?>
+        <button class='btn btn-danger' data-toggle='modal' data-target='#your-modal-end-day'>Kun yopish</button>
+    </div>
+</div>
+<?php endif; ?>
 <style>
     .glyphicon {
         font-family: "Font Awesome 5 Free";
@@ -117,8 +148,20 @@ switch ($type) {
                 _csrf: '<?= Yii::$app->request->getCsrfToken() ?>'
             }),
             success: function(data) {
-                console.log(data)
                 document.getElementById("div_" + diller_id).innerHTML = data
+            }
+        });
+    }
+    function end_day() {
+        $.ajax({
+            url: "?r=milk/days/close-day",
+            type: "POST",
+            data: ({
+                day: '<?=$model->day?>',
+                _csrf: '<?= Yii::$app->request->getCsrfToken() ?>'
+            }),
+            success: function(data) {
+                document.getElementById("end_day").innerHTML = data
             }
         });
     }

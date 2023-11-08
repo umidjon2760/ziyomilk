@@ -17,6 +17,7 @@ class m231008_133139_create_dillers_calc_table extends Migration
             'diller_id' => $this->integer()->notNull(),
             'given_sum' => $this->float(),
             'loan_sum' => $this->float(),
+            'old_loan_sum' => $this->float(),
             'all_sum' => $this->float(),
             'day' => $this->date(),
             'created_at' => $this->dateTime(),
