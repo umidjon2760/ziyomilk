@@ -34,6 +34,7 @@ class Prices extends \yii\db\ActiveRecord
     {
         return [
             [['product_code'], 'required'],
+            [['product_code'], 'unique'],
             [['price'], 'number'],
             [['status'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
@@ -50,12 +51,12 @@ class Prices extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'product_code' => 'Product Code',
-            'price' => 'Price',
+            'product_code' => 'Maxsulot',
+            'price' => 'Narxi',
             'status' => 'Status',
             'photo' => 'Photo',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Yaratilgan vaqt',
+            'updated_at' => 'O\'zgartirilgan vaqt',
         ];
     }
 
@@ -64,7 +65,7 @@ class Prices extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getProductCode()
+    public function getProduct()
     {
         return $this->hasOne(Products::class, ['code' => 'product_code']);
     }

@@ -4,12 +4,12 @@ namespace app\modules\milk\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\milk\models\Products;
+use app\modules\milk\models\Prices;
 
 /**
- * ProductsSearch represents the model behind the search form of `app\modules\milk\models\Products`.
+ * PricesSearch represents the model behind the search form of `app\modules\milk\models\Prices`.
  */
-class ProductsSearch extends Products
+class PricesSearch extends Prices
 {
     /**
      * {@inheritdoc}
@@ -18,8 +18,9 @@ class ProductsSearch extends Products
     {
         return [
             [['id'], 'integer'],
+            [['product_code', 'photo'], 'safe'],
+            [['price'], 'number'],
             [['status'], 'boolean'],
-            [['code', 'name'], 'safe'],
         ];
     }
 
@@ -41,7 +42,7 @@ class ProductsSearch extends Products
      */
     public function search($params)
     {
-        $query = Products::find();
+        $query = Prices::find();
 
         // add conditions that should always apply here
 
@@ -60,13 +61,14 @@ class ProductsSearch extends Products
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'price' => $this->price,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'code', $this->code])
-            ->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['ilike', 'product_code', $this->product_code])
+            ->andFilterWhere(['ilike', 'photo', $this->photo]);
 
         return $dataProvider;
     }

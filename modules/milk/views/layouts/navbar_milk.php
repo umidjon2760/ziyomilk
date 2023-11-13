@@ -20,18 +20,14 @@ use yii\bootstrap4\NavBar;
             '<li class="nav-item">
                         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                     </li>',
-            ['label' => 'Maxsulotlar', 'url' => ['/milk/products/index'], 'visible' => true],
+            ['label' => 'Kunlar', 'url' => ['/milk/days/index'], 'visible' => true],
             [
                 'label' => 'Ma\'lumotlar', 
                 'items' => [
-                    ['label' => 'Kunlar', 'url' => ['/milk/days/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Ishlab chiqarishlar', 'url' => ['/milk/productions/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Maxsulotlar', 'url' => ['/milk/products/index']],
                     ['label' => 'Dillerlar', 'url' => ['/milk/dillers/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Xarajatlar', 'url' => ['/milk/expenses/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Qarzlar', 'url' => ['/milk/loans/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Kassa', 'url' => ['/milk/kassa/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Investitsiya', 'url' => ['/milk/investment/index'], 'iconStyle' => 'far'],
-                    ['label' => 'Barcha maxsulotlar', 'url' => ['/milk/all-products/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Xarajatlar spr', 'url' => ['/milk/expense-spr/index'], 'iconStyle' => 'far'],
+                    ['label' => 'Narxlar', 'url' => ['/milk/prices/index'], 'iconStyle' => 'far'],
                 ],
                 'visible' => true, 
             ],

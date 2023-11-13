@@ -36,7 +36,7 @@
             echo \hail812\adminlte\widgets\Menu::widget([
                 'items' => [
                     ['label' => 'Foydalanuvchilar', 'icon' => 'user', 'url' => ['/users/index'], 'visible' => true],
-                    ['label' => 'Xisob kitob', 'icon' => 'book', 'url' => ['/milk/products/index'], 'visible' => true],
+                    ['label' => 'Xisob kitob', 'icon' => 'book', 'url' => ['/milk/days/index'], 'visible' => true],
                 ],
             ]);
             ?>

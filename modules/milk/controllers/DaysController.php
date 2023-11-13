@@ -56,7 +56,7 @@ class DaysController extends Controller
     {
         $searchModel = new DaysSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
+        $dataProvider->query->orderBy(['day' => SORT_DESC]);
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -359,7 +359,7 @@ class DaysController extends Controller
             $str .= "Qo'lingizda mavjud bo'lgan summadan '" . $all_calc_sum . "' so'm ko'p miqdorda harajat va qarzga ishlatgansiz, xarajat va qarzlaringizni qaytadan tekshiring!!!";
         } elseif ($all_calc_sum > $now_kassa) {
             $diff = $all_calc_sum - $now_kassa;
-            $str .= "Kassada " . $diff . " so'm pul kam!!!";
+            $str .= "Kassada <b>" . $diff . "</b> so'm pul kam!!!";
         } elseif ($all_calc_sum < $now_kassa) {
             $diff = $now_kassa - $all_calc_sum;
             $str .= "Kassada " . $diff . " so'm pul ko'p!!! Qayerdadir xato amaliyot bajargansiz, iltimos qaytadan tekshiring!!!";

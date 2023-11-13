@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
         $str .= "<td  class='ver-middle'>".$diller->name."</td>";
         $str .= "<td class='hor-center ver-middle'>".numberFormat($value_all_sum, 0)."</td>";
         $str .= "<td class='hor-center ver-middle'>";
-        $str .= $status ? "<input type='number'name='given_sum' step='0.1' min='0' max='".($value_loan_sum + $old_loan_sum)."' class='form-control' required value='" . $value_given_sum . "' />" : numberFormat($value_given_sum, 0);
+        $str .= $status ? "<input type='number'name='given_sum' step='0.1' min='0' class='form-control' required value='" . $value_given_sum . "' />" : numberFormat($value_given_sum, 0);
         $str .= $status ? "<input type='hidden'name='old_loan_sum' step='0.1' min='0' class='form-control' value='" . $old_loan_sum . "' />" : numberFormat($old_loan_sum, 0);
         $str .= "</td>";
         $str .= "<td class='hor-center ver-middle'>".numberFormat($old_loan_sum, 0)."</td>";

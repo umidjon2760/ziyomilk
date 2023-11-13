@@ -11,7 +11,7 @@ $arr = [
     2 => "Dillerlar",
     3 => "Xarajatlar",
     4 => "Qarzlar",
-    5 => "Barcha maxsulotlar",
+    5 => "Sklad",
     6 => "Investitsiya",
     7 => "Kassa",
 ];

@@ -1,7 +1,7 @@
 <div class="card" id="all_products">
     <div class="card-header">
         <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-            <h3 class="card-title" style="color:black;">Barcha maxsulotlar</i></h3>
+            <h3 class="card-title" style="color:black;">Sklad</i></h3>
         </button>
     </div>
     <div class="card-body">

@@ -54,17 +54,17 @@ class Dillers extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'address' => 'Address',
-            'phone' => 'Phone',
-            'phone2' => 'Phone2',
-            'tg_address' => 'Tg Address',
-            'car' => 'Car',
-            'car_number' => 'Car Number',
-            'photo' => 'Photo',
+            'name' => 'Ismi',
+            'address' => 'Manzil',
+            'phone' => 'Tel. raqam',
+            'phone2' => 'Tel. raqam2',
+            'tg_address' => 'Telegram',
+            'car' => 'Moshina',
+            'car_number' => 'Moshina raqami',
+            'photo' => 'Rasm',
             'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Yaratilgan',
+            'updated_at' => 'O\'zgartirilgan',
         ];
     }
 

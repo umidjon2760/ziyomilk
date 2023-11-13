@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="days-index card">
     <div class="card-body">
         <p>
-            <?= Html::a('Yangi', ['create'], ['class' => 'btn btn-success']) ?>
+            <?= Html::a('Yangi kun ochish', ['create'], ['class' => 'btn btn-success']) ?>
         </p>
 
         <?= GridView::widget([

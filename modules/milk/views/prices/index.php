@@ -2,13 +2,15 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use app\modules\milk\models\Products;
 
 /** @var yii\web\View $this */
 /** @var app\modules\milk\models\ProductsSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Maxsulotlar';
+$this->title = 'Narxlar';
 $this->params['breadcrumbs'][] = $this->title;
+$products = Products::getAll();
 ?>
 <div class="products-index card">
     <div class="card-body">
@@ -35,20 +37,25 @@ $this->params['breadcrumbs'][] = $this->title;
                 //     'contentOptions' => ['style' => 'width:4%;vertical-align: middle;text-align:center;'],
                 // ],
                 [
-                    'attribute' => 'code',
+                    'attribute' => 'product_code',
                     'format' => 'raw',
-                    'contentOptions' => ['style' => 'width:20%;vertical-align: middle;'],
+                    'filter' => [''=>'Танланг'] + $products,
+                    'filterType' => GridView::FILTER_SELECT2,
+                    'contentOptions' => ['style' => 'width:40%;vertical-align: middle;'],
+                    'value' => function($data){
+                        return $data->product->name;
+                    }
                 ],
                 [
-                    'attribute' => 'name',
+                    'attribute' => 'price',
                     'format' => 'raw',
-                    'contentOptions' => ['style' => 'width:43%;vertical-align: middle;'],
+                    'contentOptions' => ['style' => 'width:12%;vertical-align: middle;text-align:center;'],
                 ],
                 [
                     'attribute' => 'status',
                     'format' => 'raw',
                     'filter' => [1=>'Aktiv',0=>'Noaktiv'],
-                    'contentOptions' => ['style' => 'width:5%;vertical-align: middle;text-align:center;'],
+                    'contentOptions' => ['style' => 'width:10%;vertical-align: middle;text-align:center;'],
                     'value' => function ($data) {
                         if ($data->status) {
                             return 'Aktiv';
@@ -60,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'created_at',
                     'format' => 'raw',
-                    'contentOptions' => ['style' => 'width:10%;vertical-align: middle;text-align:center;'],
+                    'contentOptions' => ['style' => 'width:12%;vertical-align: middle;text-align:center;'],
                     'value' => function ($data) {
                         return date('d.m.Y H:i:s', strtotime($data->created_at));
                     }
@@ -68,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'updated_at',
                     'format' => 'raw',
-                    'contentOptions' => ['style' => 'width:10%;vertical-align: middle;text-align:center;'],
+                    'contentOptions' => ['style' => 'width:12%;vertical-align: middle;text-align:center;'],
                     'value' => function ($data) {
                         return date('d.m.Y H:i:s', strtotime($data->updated_at));
                     }

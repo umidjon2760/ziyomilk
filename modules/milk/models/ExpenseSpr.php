@@ -34,6 +34,7 @@ class ExpenseSpr extends \yii\db\ActiveRecord
     {
         return [
             [['code', 'name'], 'required'],
+            [['code'], 'unique'],
             [['status'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['code'], 'string', 'max' => 50],
@@ -49,11 +50,11 @@ class ExpenseSpr extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'code' => 'Code',
-            'name' => 'Name',
+            'code' => 'Kodi',
+            'name' => 'Nomi',
             'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Yaratilgan vaqt',
+            'updated_at' => 'O\'zgartirilgan vaqt',
         ];
     }
 

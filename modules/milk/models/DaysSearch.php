@@ -18,7 +18,7 @@ class DaysSearch extends Days
     {
         return [
             [['id', 'status'], 'integer'],
-            [['day', 'created_at', 'updated_at'], 'safe'],
+            [['day'], 'safe'],
         ];
     }
 

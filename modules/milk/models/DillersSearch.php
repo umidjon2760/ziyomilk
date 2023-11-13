@@ -4,12 +4,12 @@ namespace app\modules\milk\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\milk\models\Products;
+use app\modules\milk\models\Dillers;
 
 /**
- * ProductsSearch represents the model behind the search form of `app\modules\milk\models\Products`.
+ * DillersSearch represents the model behind the search form of `app\modules\milk\models\Dillers`.
  */
-class ProductsSearch extends Products
+class DillersSearch extends Dillers
 {
     /**
      * {@inheritdoc}
@@ -17,9 +17,9 @@ class ProductsSearch extends Products
     public function rules()
     {
         return [
-            [['id'], 'integer'],
+            [['id', 'phone', 'phone2'], 'integer'],
+            [['name', 'address', 'tg_address', 'car_number', 'photo', 'created_at', 'updated_at', 'car'], 'safe'],
             [['status'], 'boolean'],
-            [['code', 'name'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class ProductsSearch extends Products
      */
     public function search($params)
     {
-        $query = Products::find();
+        $query = Dillers::find();
 
         // add conditions that should always apply here
 
@@ -60,13 +60,19 @@ class ProductsSearch extends Products
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'status' => $this->status,
+            'phone' => $this->phone,
+            'phone2' => $this->phone2,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'status' => $this->status,
         ]);
 
-        $query->andFilterWhere(['like', 'code', $this->code])
-            ->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['ilike', 'name', $this->name])
+            ->andFilterWhere(['ilike', 'address', $this->address])
+            ->andFilterWhere(['ilike', 'tg_address', $this->tg_address])
+            ->andFilterWhere(['ilike', 'car_number', $this->car_number])
+            ->andFilterWhere(['ilike', 'photo', $this->photo])
+            ->andFilterWhere(['ilike', 'car', $this->car]);
 
         return $dataProvider;
     }
