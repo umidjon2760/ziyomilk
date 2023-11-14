@@ -12,8 +12,8 @@ $this->params['breadcrumbs'][] = 'O\'zgartirish';
 ?>
 <div class="dillers-update card">
     <div class="card-body">
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+        <?= $this->render('_form', [
+            'model' => $model,
+        ]) ?>
     </div>
 </div>

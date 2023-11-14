@@ -16,13 +16,13 @@ $products = Products::getAll();
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'product_code')->widget(Select2::class, [
-            'data' => $products,
-            'options' => ['prompt' => 'Tanlang ...', 'multiple' => false],
-            'theme' => Select2::THEME_BOOTSTRAP,
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]) ?>
+        'data' => $products,
+        'options' => ['prompt' => 'Tanlang ...', 'multiple' => false],
+        'theme' => Select2::THEME_BOOTSTRAP,
+        'pluginOptions' => [
+            'allowClear' => true
+        ],
+    ]) ?>
 
     <?= $form->field($model, 'price')->textInput() ?>
 

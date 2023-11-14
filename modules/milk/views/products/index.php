@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'status',
                     'format' => 'raw',
-                    'filter' => [1=>'Aktiv',0=>'Noaktiv'],
+                    'filter' => [1 => 'Aktiv', 0 => 'Noaktiv'],
                     'contentOptions' => ['style' => 'width:5%;vertical-align: middle;text-align:center;'],
                     'value' => function ($data) {
                         if ($data->status) {

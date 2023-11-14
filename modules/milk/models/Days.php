@@ -126,7 +126,8 @@ class Days extends \yii\db\ActiveRecord
         return $this->hasMany(Sellings::class, ['day' => 'day']);
     }
 
-    public static function getOpenDay(){
+    public static function getOpenDay()
+    {
         $day = Days::find()->where(['status' => true])->orderBy(['day' => SORT_DESC])->one();
         return $day ? $day->day : '2020-01-01';
     }

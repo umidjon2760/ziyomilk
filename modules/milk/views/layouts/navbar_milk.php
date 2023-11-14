@@ -22,14 +22,14 @@ use yii\bootstrap4\NavBar;
                     </li>',
             ['label' => 'Kunlar', 'url' => ['/milk/days/index'], 'visible' => true],
             [
-                'label' => 'Ma\'lumotlar', 
+                'label' => 'Ma\'lumotlar',
                 'items' => [
                     ['label' => 'Maxsulotlar', 'url' => ['/milk/products/index']],
                     ['label' => 'Dillerlar', 'url' => ['/milk/dillers/index'], 'iconStyle' => 'far'],
                     ['label' => 'Xarajatlar spr', 'url' => ['/milk/expense-spr/index'], 'iconStyle' => 'far'],
                     ['label' => 'Narxlar', 'url' => ['/milk/prices/index'], 'iconStyle' => 'far'],
                 ],
-                'visible' => true, 
+                'visible' => true,
             ],
         ],
     ]);

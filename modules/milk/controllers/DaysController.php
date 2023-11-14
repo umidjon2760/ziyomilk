@@ -127,10 +127,10 @@ class DaysController extends Controller
                     // yangi kun ochilyotganda eski kundegi barcha maxsulotlarni yangi kunga yozib qo'yish kerak
                     // yangi kun ochilyotganda eski kundegi kassadagi pullarni yangi kunga old_day_sum ga yozib qo'yish kerak
                     $dillers_calc = DillersCalc::find()->where(['day' => $old_day])->all();
-                    foreach($dillers_calc as $diller_calc){
+                    foreach ($dillers_calc as $diller_calc) {
                         $new_loan_sum = $diller_calc->loan_sum + $diller_calc->old_loan_sum;
-                        $new_diller_calc = DillersCalc::find()->where(['diller_id' => $diller_calc->diller_id,'day' => $new_day])->one();
-                        if($new_diller_calc){
+                        $new_diller_calc = DillersCalc::find()->where(['diller_id' => $diller_calc->diller_id, 'day' => $new_day])->one();
+                        if ($new_diller_calc) {
                             $new_diller_calc->given_sum = 0;
                             $new_diller_calc->loan_sum = 0;
                             $new_diller_calc->old_loan_sum = $new_loan_sum;
@@ -138,8 +138,7 @@ class DaysController extends Controller
                             $new_diller_calc->day = $new_day;
                             $new_diller_calc->updated_at = $now;
                             $new_diller_calc->save(false);
-                        }
-                        else{
+                        } else {
                             $new_diller_calc = new DillersCalc();
                             $new_diller_calc->diller_id = $diller_calc->diller_id;
                             $new_diller_calc->given_sum = 0;
@@ -152,15 +151,14 @@ class DaysController extends Controller
                             $new_diller_calc->save(false);
                         }
                     }
-                    $all_products = AllProducts::find()->where(['day'=>$old_day])->all();
-                    foreach($all_products as $all_product){
-                        $new_all_product = AllProducts::find()->where(['product_code' => $all_product->product_code,'day'=>$new_day])->one();
-                        if($new_all_product){
+                    $all_products = AllProducts::find()->where(['day' => $old_day])->all();
+                    foreach ($all_products as $all_product) {
+                        $new_all_product = AllProducts::find()->where(['product_code' => $all_product->product_code, 'day' => $new_day])->one();
+                        if ($new_all_product) {
                             $new_all_product->count = $all_product->count;
                             $new_all_product->updated_at = $now;
                             $new_all_product->save(false);
-                        }
-                        else{
+                        } else {
                             $new_all_product = new AllProducts();
                             $new_all_product->product_code = $all_product->product_code;
                             $new_all_product->count = $all_product->count;
@@ -171,14 +169,13 @@ class DaysController extends Controller
                         }
                     }
                     $kassa = Kassa::find()->where(['day' => $old_day])->one();
-                    if($kassa){
+                    if ($kassa) {
                         $new_kassa = Kassa::find()->where(['day' => $new_day])->one();
-                        if($new_kassa){
+                        if ($new_kassa) {
                             $new_kassa->old_day_sum = $kassa->sum;
                             $new_kassa->updated_at = $now;
                             $new_kassa->save(false);
-                        }
-                        else{
+                        } else {
                             $new_kassa = new Kassa();
                             $new_kassa->day = $new_day;
                             $new_kassa->sum = 0;

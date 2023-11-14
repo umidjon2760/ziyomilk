@@ -39,10 +39,10 @@ $products = Products::getAll();
                 [
                     'attribute' => 'product_code',
                     'format' => 'raw',
-                    'filter' => [''=>'Танланг'] + $products,
+                    'filter' => ['' => 'Танланг'] + $products,
                     'filterType' => GridView::FILTER_SELECT2,
                     'contentOptions' => ['style' => 'width:40%;vertical-align: middle;'],
-                    'value' => function($data){
+                    'value' => function ($data) {
                         return $data->product->name;
                     }
                 ],
@@ -54,7 +54,7 @@ $products = Products::getAll();
                 [
                     'attribute' => 'status',
                     'format' => 'raw',
-                    'filter' => [1=>'Aktiv',0=>'Noaktiv'],
+                    'filter' => [1 => 'Aktiv', 0 => 'Noaktiv'],
                     'contentOptions' => ['style' => 'width:10%;vertical-align: middle;text-align:center;'],
                     'value' => function ($data) {
                         if ($data->status) {

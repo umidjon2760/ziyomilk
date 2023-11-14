@@ -89,33 +89,33 @@ switch ($type) {
         echo "Topilmadi";
         break;
 }
-if($status) :
+if ($status) :
 ?>
-<div class="card collapsed-card">
-    <div class="card-header">
-        <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-            <h3 class="card-title" style="color:black;">Kun yopish</i>
-        </button>
+    <div class="card collapsed-card">
+        <div class="card-header">
+            <button type="button" style="width:100%;color:black;font-size:13pt;border:1px solid white;text-align:left;" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                <h3 class="card-title" style="color:black;">Kun yopish</i>
+            </button>
+        </div>
+        <div class="card-body">
+            <?php
+            Modal::begin([
+                'title' => '<h2>Kun yopish - ' . date('d.m.Y', strtotime($model->day)) . '</h2>',
+                'id' => 'your-modal-end-day',
+                'size' => 'modal-md'
+            ]);
+            echo "<div>";
+            // echo "<p>Barcha xolatlarni tekshirib chiqdingizmi? Kun yopilgandan so'ng shu kunga boshqa amaliyot bajara olmaysiz. Rozimisiz?</p>";
+            echo "<p>Kun yopishdan avval qilgan amaliyotlaringizni tekshirishing!!!</p>";
+            echo "<div id='end_day'>";
+            echo "</div>";
+            echo "<button id='btn_end_day' onclick='end_day();' class='btn btn-success'><span class='fas fa-check-circle'></span> Tekshirish</button>";
+            echo "</div>";
+            Modal::end();
+            ?>
+            <button class='btn btn-danger' data-toggle='modal' data-target='#your-modal-end-day'>Kun yopish</button>
+        </div>
     </div>
-    <div class="card-body">
-        <?php
-        Modal::begin([
-            'title' => '<h2>Kun yopish - ' . date('d.m.Y', strtotime($model->day)) . '</h2>',
-            'id' => 'your-modal-end-day',
-            'size' => 'modal-md'
-        ]);
-        echo "<div>";
-        // echo "<p>Barcha xolatlarni tekshirib chiqdingizmi? Kun yopilgandan so'ng shu kunga boshqa amaliyot bajara olmaysiz. Rozimisiz?</p>";
-        echo "<p>Kun yopishdan avval qilgan amaliyotlaringizni tekshirishing!!!</p>";
-        echo "<div id='end_day'>";
-        echo "</div>";
-        echo "<button id='btn_end_day' onclick='end_day();' class='btn btn-success'><span class='fas fa-check-circle'></span> Tekshirish</button>";
-        echo "</div>";
-        Modal::end();
-        ?>
-        <button class='btn btn-danger' data-toggle='modal' data-target='#your-modal-end-day'>Kun yopish</button>
-    </div>
-</div>
 <?php endif; ?>
 <style>
     .glyphicon {
@@ -153,12 +153,13 @@ if($status) :
             }
         });
     }
+
     function end_day() {
         $.ajax({
             url: "?r=milk/days/check-close-day",
             type: "POST",
             data: ({
-                day: '<?=$model->day?>',
+                day: '<?= $model->day ?>',
                 _csrf: '<?= Yii::$app->request->getCsrfToken() ?>'
             }),
             success: function(data) {

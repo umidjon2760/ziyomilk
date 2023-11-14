@@ -24,23 +24,23 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
         </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            [
-                'attribute' => 'product_code',
-                'value' => function($data){
-                    return $data->product->name;
-                }
+        <?= DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+                'id',
+                [
+                    'attribute' => 'product_code',
+                    'value' => function ($data) {
+                        return $data->product->name;
+                    }
+                ],
+                'price',
+                'status:boolean',
+                'photo',
+                'created_at',
+                'updated_at',
             ],
-            'price',
-            'status:boolean',
-            'photo',
-            'created_at',
-            'updated_at',
-        ],
-    ]) ?>
+        ]) ?>
 
-</div>
+    </div>
 </div>

@@ -68,8 +68,9 @@ class ExpenseSpr extends \yii\db\ActiveRecord
         return $this->hasMany(Expenses::class, ['expense_code' => 'code']);
     }
 
-    public static function getAll(){
+    public static function getAll()
+    {
         $model = ExpenseSpr::find()->where(['status' => true])->all();
         return $model;
-    } 
+    }
 }
