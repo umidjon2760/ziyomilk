@@ -315,8 +315,8 @@ class DaysController extends Controller
         $investment_sum = $row_investment['sum'];
 
         $kassa = Kassa::find()->where(['day' => $day])->one();
-        $old_kassa = $kassa->old_day_sum;
-        $now_kassa = $kassa->sum;
+        $old_kassa = $kassa ? $kassa->old_day_sum : 0;
+        $now_kassa = $kassa ? $kassa->sum : 0;
 
         $all_sum = $diller_all_given_sum + $investment_sum + $old_kassa;
         $all_minus_sum = $expense_all_given_sum + $loan_all_given_sum;

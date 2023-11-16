@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <p>
             <?= Html::a('Yangi qo\'shish', ['create'], ['class' => 'btn btn-success']) ?>
         </p>
-        ?>
+        
 
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
