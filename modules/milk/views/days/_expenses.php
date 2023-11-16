@@ -35,12 +35,33 @@ $status = $model->status;
                     'name'  => 'count',
                     'title' => 'Soni',
                     'defaultValue' => 0,
+                    'options' => [
+                        'onkeyup' => 'calc_count(this)'
+                    ],
                     'type'  => 'textInput',
                 ],
                 [
                     'name'  => 'price',
                     'defaultValue' => 0,
                     'title' => 'Narxi',
+                    'options' => [
+                        'onkeyup' => 'calc_price(this)'
+                    ]
+                ],
+                [
+                    'name'  => 'calc',
+                    'title' => 'Summa',
+                    'defaultValue' => 0,
+                    'type'  => 'static',
+                    'headerOptions' => [
+                        'style' => 'width:8%;text-align:center;'
+                    ],
+                    'options' => [
+                        'style' => 'text-align:center;vertical-align:middle;'
+                    ],
+                    'value' => function ($data) {
+                        return numberFormat($data['calc'], 0);
+                    }
                 ],
                 [
                     'name'  => 'given_sum',
@@ -63,16 +84,16 @@ $status = $model->status;
         $str .= "<th style='width:12%;' class='hor-center ver-middle'>Qarz</th>";
         $str .= "</tr>";
         $t = 1;
-        if(!$status){
+        if (!$status) {
             foreach ($model->expenses as $expense) {
                 $str .= "<tr>";
-                $str .= "<td class='hor-center ver-middle'>".$t."</td>";
-                $str .= "<td>".$expense->expenseCode->name."</td>";
-                $str .= "<td class='hor-center ver-middle'>".$expense->count."</td>";
-                $str .= "<td class='hor-center ver-middle'>".numberFormat($expense->sum,0)."</td>";
-                $str .= "<td class='hor-center ver-middle'>".numberFormat($expense->all_sum,0)."</td>";
-                $str .= "<td class='hor-center ver-middle'>".numberFormat($expense->given_sum,0)."</td>";
-                $str .= "<td class='hor-center ver-middle'>".numberFormat($expense->all_sum - $expense->given_sum,0)."</td>";
+                $str .= "<td class='hor-center ver-middle'>" . $t . "</td>";
+                $str .= "<td>" . $expense->expenseCode->name . "</td>";
+                $str .= "<td class='hor-center ver-middle'>" . $expense->count . "</td>";
+                $str .= "<td class='hor-center ver-middle'>" . numberFormat($expense->sum, 0) . "</td>";
+                $str .= "<td class='hor-center ver-middle'>" . numberFormat($expense->all_sum, 0) . "</td>";
+                $str .= "<td class='hor-center ver-middle'>" . numberFormat($expense->given_sum, 0) . "</td>";
+                $str .= "<td class='hor-center ver-middle'>" . numberFormat($expense->all_sum - $expense->given_sum, 0) . "</td>";
                 $str .= "</tr>";
                 $t++;
             }
@@ -82,3 +103,28 @@ $status = $model->status;
         ?>
     </div>
 </div>
+<script>
+    function calc_price(element) {
+        const my_array = element.id.split("-");
+        var id_count = my_array[0] + "-" + my_array[1] + "-" + "count";
+        var id_calc = my_array[0] + "-" + my_array[1] + "-" + "calc";
+        var count_value = document.getElementById(id_count).value;
+        var price_value = element.value;
+        var calc_value = count_value * price_value;
+        document.getElementById(id_calc).innerHTML = numberWithProbel(calc_value);
+    }
+
+    function calc_count(element) {
+        const my_array = element.id.split("-");
+        var id_price = my_array[0] + "-" + my_array[1] + "-" + "price";
+        var id_calc = my_array[0] + "-" + my_array[1] + "-" + "calc";
+        var price_value = document.getElementById(id_price).value;
+        var count_value = element.value;
+        var calc_value = count_value * price_value;
+        document.getElementById(id_calc).innerHTML = numberWithProbel(calc_value);
+    }
+
+    function numberWithProbel(x) {
+        return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, " ");
+    }
+</script>

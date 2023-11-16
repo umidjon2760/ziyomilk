@@ -66,6 +66,15 @@ class Days extends \yii\db\ActiveRecord
     {
         return $this->hasMany(AllProducts::class, ['day' => 'day']);
     }
+    public function getAllMaterials()
+    {
+        return $this->hasMany(AllMaterials::class, ['day' => 'day']);
+    }
+
+    public function getDailyMaterials()
+    {
+        return $this->hasMany(DailyMaterials::class, ['day' => 'day']);
+    }
 
     /**
      * Gets query for [[DillersCalcs]].

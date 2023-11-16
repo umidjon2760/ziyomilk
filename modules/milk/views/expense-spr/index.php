@@ -6,6 +6,8 @@ use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 
+$types = ExpenseSpr::getExpenseTypes();
+
 /** @var yii\web\View $this */
 /** @var app\modules\milk\models\ExpenseSprSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -42,6 +44,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'name',
                     'format' => 'raw',
                     'contentOptions' => ['style' => 'width:43%;vertical-align: middle;'],
+                ],
+                [
+                    'attribute' => 'type',
+                    'format' => 'raw',
+                    'filter' => $types,
+                    'contentOptions' => ['style' => 'width:5%;vertical-align: middle;text-align:center;'],
+                    'value' => function ($data) use ($types) {
+                        return isset($types[$data->type]) ? $types[$data->type] : $data->type;
+                    }
                 ],
                 [
                     'attribute' => 'status',

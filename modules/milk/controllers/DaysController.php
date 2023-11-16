@@ -87,6 +87,7 @@ class DaysController extends Controller
                 'expense_code' => $expense->expense_code,
                 'count' => $expense->count,
                 'price' => $expense->sum,
+                'calc' => $expense->count * $expense->sum,
                 'given_sum' => $given_sum,
             ];
         }

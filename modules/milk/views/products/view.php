@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\milk\models\ExpenseSpr;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -10,6 +11,7 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Maxsulotlar', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+$xomashyos = ExpenseSpr::getXomashyos();
 ?>
 <div class="products-view card">
     <div class="card-body">
@@ -30,6 +32,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'id',
                 'code',
                 'name',
+                [
+                    'attribute' => 'expense_code',
+                    'value' => function($data) use ($xomashyos){
+                        return isset($xomashyos[$data->expense_code]) ? $xomashyos[$data->expense_code] : $data->expense_code;
+                    }
+                ],
                 'status',
                 'created_at',
                 'updated_at',

@@ -11,18 +11,20 @@ $arr = [
     2 => "Dillerlar",
     3 => "Xarajatlar",
     4 => "Qarzlar",
-    5 => "Sklad",
-    6 => "Investitsiya",
-    7 => "Kassa",
+    5 => "Xom ashyo",
+    6 => "Sklad",
+    7 => "Investitsiya",
+    8 => "Kassa",
 ];
 $arr_width = [
-    1 => "width:17%;",
+    1 => "width:13%;",
     2 => "width:13%;",
     3 => "width:13%;",
-    4 => "width:13%;",
-    5 => "width:17%;",
+    4 => "width:11%;",
+    5 => "width:13%;",
     6 => "width:13%;",
     7 => "width:13%;",
+    8 => "width:12%;",
 ];
 $status = $model->status;
 ?>
@@ -71,16 +73,21 @@ switch ($type) {
         ]);
         break;
     case 5:
+        echo $this->render('_materials', [
+            'model' => $model,
+        ]);
+        break;
+    case 6:
         echo $this->render('_all_products', [
             'model' => $model
         ]);
         break;
-    case 6:
+    case 7:
         echo $this->render('_invest', [
             'model' => $model
         ]);
         break;
-    case 7:
+    case 8:
         echo $this->render('_kassa', [
             'model' => $model
         ]);

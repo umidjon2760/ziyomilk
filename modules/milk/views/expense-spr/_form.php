@@ -1,11 +1,13 @@
 <?php
 
+use app\modules\milk\models\ExpenseSpr;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var app\modules\milk\models\Products $model */
 /** @var yii\widgets\ActiveForm $form */
+$types = ExpenseSpr::getExpenseTypes();
 ?>
 
 <div class="products-form">
@@ -15,6 +17,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'type')->dropDownList($types) ?>
 
     <?= $form->field($model, 'status')->checkbox(['checked' => $model ? $model->status : true]) ?>
 

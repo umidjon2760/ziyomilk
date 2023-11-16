@@ -1,11 +1,14 @@
 <?php
 
+use app\modules\milk\models\ExpenseSpr;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var app\modules\milk\models\Products $model */
 /** @var yii\widgets\ActiveForm $form */
+$xomashyos = ExpenseSpr::getXomashyos();
 ?>
 
 <div class="products-form">
@@ -15,6 +18,15 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'expense_code')->widget(Select2::class, [
+        'data' => $xomashyos,
+        'options' => ['prompt' => 'Tanlang ...', 'multiple' => false],
+        'theme' => Select2::THEME_BOOTSTRAP,
+        'pluginOptions' => [
+            'allowClear' => true
+        ],
+    ]) ?>
 
     <?= $form->field($model, 'status')->checkbox(['checked' => $model ? $model->status : true]) ?>
 

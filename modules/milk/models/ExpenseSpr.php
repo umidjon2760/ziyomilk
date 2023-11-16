@@ -37,7 +37,7 @@ class ExpenseSpr extends \yii\db\ActiveRecord
             [['code'], 'unique'],
             [['status'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
-            [['code'], 'string', 'max' => 50],
+            [['code','type'], 'string', 'max' => 50],
             [['name'], 'string', 'max' => 255],
             [['code'], 'unique'],
         ];
@@ -52,6 +52,7 @@ class ExpenseSpr extends \yii\db\ActiveRecord
             'id' => 'ID',
             'code' => 'Kodi',
             'name' => 'Nomi',
+            'type' => 'Turi',
             'status' => 'Status',
             'created_at' => 'Yaratilgan vaqt',
             'updated_at' => 'O\'zgartirilgan vaqt',
@@ -72,5 +73,15 @@ class ExpenseSpr extends \yii\db\ActiveRecord
     {
         $model = ExpenseSpr::find()->where(['status' => true])->all();
         return $model;
+    }
+
+    public static function getExpenseTypes(){
+        return ['xarajat' => 'Xarajat', 'xomashyo' => 'Xomashyo'];
+    }
+
+    public static function getXomashyos(){
+        $model = ExpenseSpr::find()->where(['status' => true,'type' => 'xomashyo'])->all();
+        $items = ArrayHelper::map($model,'code','name');
+        return $items;
     }
 }

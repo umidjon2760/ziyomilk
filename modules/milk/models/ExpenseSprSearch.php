@@ -18,7 +18,7 @@ class ExpenseSprSearch extends ExpenseSpr
     {
         return [
             [['id'], 'integer'],
-            [['code', 'name'], 'safe'],
+            [['code', 'name','type'], 'safe'],
             [['status'], 'boolean'],
         ];
     }
@@ -66,6 +66,7 @@ class ExpenseSprSearch extends ExpenseSpr
         ]);
 
         $query->andFilterWhere(['ilike', 'code', $this->code])
+            ->andFilterWhere(['ilike', 'type', $this->type])
             ->andFilterWhere(['ilike', 'name', $this->name]);
 
         return $dataProvider;

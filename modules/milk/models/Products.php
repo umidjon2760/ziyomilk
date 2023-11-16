@@ -38,7 +38,7 @@ class Products extends \yii\db\ActiveRecord
             [['code', 'name'], 'required'],
             [['status'], 'boolean'],
             [['created_at', 'updated_at'], 'safe'],
-            [['code'], 'string', 'max' => 50],
+            [['code','expense_code'], 'string', 'max' => 50],
             [['name'], 'string', 'max' => 255],
             [['code'], 'unique'],
         ];
@@ -53,6 +53,7 @@ class Products extends \yii\db\ActiveRecord
             'id' => 'ID',
             'code' => 'Kodi',
             'name' => 'Nomi',
+            'expense_code' => 'Xarajat nomi',
             'status' => 'Status',
             'created_at' => 'Yaratilgan vaqt',
             'updated_at' => 'O\'zgartirilgan vaqt',

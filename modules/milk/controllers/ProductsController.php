@@ -2,10 +2,13 @@
 
 namespace app\modules\milk\controllers;
 
+use app\modules\milk\models\AllMaterials;
 use app\modules\milk\models\AllProducts;
+use app\modules\milk\models\DailyMaterials;
 use app\modules\milk\models\Days;
 use app\modules\milk\models\DillersCalc;
 use app\modules\milk\models\Expenses;
+use app\modules\milk\models\ExpenseSpr;
 use app\modules\milk\models\Investment;
 use app\modules\milk\models\Kassa;
 use app\modules\milk\models\Loans;
@@ -53,10 +56,11 @@ class ProductsController extends Controller
     {
         $searchModel = new ProductsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
+        $xomashyos = ExpenseSpr::getXomashyos();
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'xomashyos' => $xomashyos,
         ]);
     }
 
@@ -151,6 +155,8 @@ class ProductsController extends Controller
         $day = $_POST['day'];
         $now = date('Y-m-d H:i:s');
         foreach ($product_codes as $product_code) {
+            $product = Products::find()->where(['code' => $product_code])->one();
+            $expense_spr = ExpenseSpr::find()->where(['type' => 'xomashyo','code' => $product->expense_code])->one();
             $production = Productions::findOne($_POST['production_id'][$product_code]);
             $count = $_POST['count'][$product_code];
             $delete = false;
@@ -180,21 +186,21 @@ class ProductsController extends Controller
             if ($all_product) {
                 if (!$delete && $production) {
                     $diff_count = $production->count - $old_count;
-                    $k = 'all_product and production have<br>production_count => '.$production->count.'<br>diff =>'.$diff_count."<br>old_count => ".$old_count;
+                    $k = 'all_product and production have<br>production_count => ' . $production->count . '<br>diff =>' . $diff_count . "<br>old_count => " . $old_count;
                     $all_product_count = $all_product->count + $diff_count;
                     $all_product->count = $all_product_count;
                     $all_product->updated_at = $now;
                     $all_product->save(false);
                 } else {
-                    $k = 'all_product have '.$old_count;
+                    $k = 'all_product have ' . $old_count;
                     $all_product_count = $all_product->count - $old_count;
                     $all_product->count = $all_product_count;
                     $all_product->updated_at = $now;
                     $all_product->save(false);
                 }
             } else {
-                if(!$delete){
-                    $k = 'production have '.$old_count;
+                if (!$delete) {
+                    $k = 'production have ' . $old_count;
                     $all_product = new AllProducts();
                     $all_product->product_code = $product_code;
                     $all_product->count = $count;
@@ -202,9 +208,47 @@ class ProductsController extends Controller
                     $all_product->created_at = $now;
                     $all_product->updated_at = $now;
                     $all_product->save(false);
+                } else {
+                    $k = 'all_product and production not have ' . $old_count;
                 }
-                else{
-                    $k = 'all_product and production not have '.$old_count;
+            }
+            if($expense_spr){
+                $new_count = $count;
+                $daily_material = DailyMaterials::find()->where(['expense_code' => $expense_spr->code, 'day' => $day])->one();
+                if ($daily_material) {
+                    $old_count = $daily_material->count;
+                    if($new_count == 0){
+                        $daily_material->delete();
+                    }
+                    elseif ($old_count != $new_count) {
+                        $daily_material->count = $new_count;
+                        $daily_material->updated_at = $now;
+                        $daily_material->save(false);
+                    }
+                } else {
+                    $old_count = 0;
+                    $daily_material = new DailyMaterials();
+                    $daily_material->expense_code = $expense_spr->code;
+                    $daily_material->count = $new_count;
+                    $daily_material->day = $day;
+                    $daily_material->created_at = $now;
+                    $daily_material->updated_at = $now;
+                    $daily_material->save(false);
+                }
+                $all_material = AllMaterials::find()->where(['expense_code' => $expense_spr->code, 'day' => $day])->one();
+                if ($all_material) {
+                    $new_all_count = $all_material->count + $old_count - $new_count;
+                    $all_material->count = $new_all_count;
+                    $all_material->updated_at = $now;
+                    $all_material->save(false);
+                } else {
+                    $all_material = new AllMaterials();
+                    $all_material->expense_code = $expense_spr->code;
+                    $all_material->count = $new_count;
+                    $all_material->day = $day;
+                    $all_material->created_at = $now;
+                    $all_material->updated_at = $now;
+                    $all_material->save(false);
                 }
             }
             // debug($k);
@@ -230,22 +274,21 @@ class ProductsController extends Controller
             $all_sum1 += $all_sum;
             $selling = Sellings::find()->where(['id' => $selling_id])->one();
             $all_product = AllProducts::find()->where(['product_code' => $product_code, 'day' => $day])->one();
-            if($all_product){
+            if ($all_product) {
                 $diff = $all_product->count - $last_buy;
-                if($selling){
+                if ($selling) {
                     $last_buy = $buy - $return;
                     $last_selling_buy = $selling->buy - $selling->return;
                     $dif_last_buy = $last_buy - $last_selling_buy;
                     $diff = $all_product->count - $dif_last_buy;
                     $all_product->count = $diff;
                     $all_product->updated_at = $now;
-                }
-                else{
+                } else {
                     $all_product->count = $diff;
                     $all_product->updated_at = $now;
                 }
-                if($diff < 0){
-                    debug($product_code." bazada yetarli emas!!!");
+                if ($diff < 0) {
+                    debug($product_code . " bazada yetarli emas!!!");
                 }
                 $all_product->save(false);
             }
@@ -300,32 +343,53 @@ class ProductsController extends Controller
         $arr_expense = [];
         foreach ($_POST['multipleinput'] as $key => $array) {
             $expense_code = $array['expense_code'];
-            if(!in_array($expense_code,$arr_expense)){
+            $expense_spr = ExpenseSpr::find()->where(['code' => $expense_code])->one();
+            $type = $expense_spr->type;
+            if (!in_array($expense_code, $arr_expense)) {
                 $arr_expense[] = $expense_code;
-                $count = $array['count'];
+                $new_count = $array['count'];
                 $price = $array['price'];
                 $given_sum = $array['given_sum'];
-                $all_sum = $count * $price;
+                $all_sum = $new_count * $price;
                 $loan_sum = $all_sum - $given_sum;
                 $expense = Expenses::find()->where(['expense_code' => $expense_code, 'day' => $day])->one();
                 if ($expense) {
+                    $old_count =  $expense->count;
                     $expense->sum = $price;
-                    $expense->count = $count;
+                    $expense->count = $new_count;
                     $expense->all_sum = $all_sum;
                     $expense->given_sum = $given_sum;
                     $expense->updated_at = $now;
                 } else {
+                    $old_count = 0;
                     $expense = new Expenses();
                     $expense->expense_code = $expense_code;
                     $expense->sum = $price;
                     $expense->day = $day;
-                    $expense->count = $count;
+                    $expense->count = $new_count;
                     $expense->all_sum = $all_sum;
                     $expense->given_sum = $given_sum;
                     $expense->created_at = $now;
                     $expense->updated_at = $now;
                 }
                 $expense->save(false);
+                if($type == 'xomashyo'){
+                    $all_material = AllMaterials::find()->where(['expense_code' => $expense_code, 'day' => $day])->one();
+                    if ($all_material) {
+                        $new_all_count = $all_material->count + $old_count - $new_count;
+                        $all_material->count = $new_all_count;
+                        $all_material->updated_at = $now;
+                        $all_material->save(false);
+                    } else {
+                        $all_material = new AllMaterials();
+                        $all_material->expense_code = $expense_code;
+                        $all_material->count = $new_count;
+                        $all_material->day = $day;
+                        $all_material->created_at = $now;
+                        $all_material->updated_at = $now;
+                        $all_material->save(false);
+                    }
+                }
                 $loan = Loans::find()->where(['expense_id' => $expense->id])->one();
                 if ($loan) {
                     if ($loan_sum > 0) {
@@ -348,8 +412,7 @@ class ProductsController extends Controller
                         $loan->save(false);
                     }
                 }
-            }
-            else{
+            } else {
                 continue;
             }
         }
@@ -362,7 +425,7 @@ class ProductsController extends Controller
         $all = $_POST['given_sum'];
         $now = date('Y-m-d H:i:s');
         foreach ($all as $loan_id => $given_sum) {
-            if($given_sum > 0){
+            if ($given_sum > 0) {
                 $loans_calc = LoansCalc::find()->where(['loan_id' => $loan_id, 'day' => $day])->one();
                 if ($loans_calc) {
                     $loans_calc->given_sum = $given_sum;
@@ -377,8 +440,7 @@ class ProductsController extends Controller
                     $loans_calc->updated_at = $now;
                     $loans_calc->save(false);
                 }
-            }
-            else{
+            } else {
                 continue;
             }
         }
@@ -390,15 +452,14 @@ class ProductsController extends Controller
         $now = date('Y-m-d H:i:s');
         $day = $_POST['day'];
         $kassa = Kassa::find()->where(['day' => $day])->one();
-        if(!$kassa){
+        if (!$kassa) {
             $kassa = new Kassa();
             $kassa->sum = $kassa_sum;
             $kassa->day = $day;
             $kassa->created_at = $now;
             $kassa->updated_at = $now;
             $kassa->save(false);
-        }
-        else{
+        } else {
             $kassa->sum = $kassa_sum;
             $kassa->updated_at = $now;
             $kassa->save(false);
@@ -413,7 +474,7 @@ class ProductsController extends Controller
         $day = $_POST['day'];
         $comment = $_POST['comment'];
         $invest = Investment::find()->where(['day' => $day])->one();
-        if(!$invest){
+        if (!$invest) {
             $invest = new Investment();
             $invest->sum = $invest_sum;
             $invest->day = $day;
@@ -421,8 +482,7 @@ class ProductsController extends Controller
             $invest->created_at = $now;
             $invest->updated_at = $now;
             $invest->save(false);
-        }
-        else{
+        } else {
             $invest->sum = $invest_sum;
             $invest->comment = $comment;
             $invest->updated_at = $now;
