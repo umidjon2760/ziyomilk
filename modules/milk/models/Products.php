@@ -53,7 +53,7 @@ class Products extends \yii\db\ActiveRecord
             'id' => 'ID',
             'code' => 'Kodi',
             'name' => 'Nomi',
-            'expense_code' => 'Xarajat nomi',
+            'expense_code' => 'Xom ashyo',
             'status' => 'Status',
             'created_at' => 'Yaratilgan vaqt',
             'updated_at' => 'O\'zgartirilgan vaqt',
