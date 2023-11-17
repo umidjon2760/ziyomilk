@@ -41,17 +41,17 @@ class ProductsController extends Controller
                     'actions' => [
                         'delete' => ['POST'],
                         'save-production' => ['POST'],
+                        'save-sellings' => ['POST'],
+                        'save-expenses' => ['POST'],
+                        'save-loans' => ['POST'],
+                        'save-kassa' => ['POST'],
+                        'save-invest' => ['POST'],
+                        'save-materials' => ['POST'],
                     ],
                 ],
             ]
         );
     }
-
-    /**
-     * Lists all Products models.
-     *
-     * @return string
-     */
     public function actionIndex()
     {
         $searchModel = new ProductsSearch();
@@ -63,25 +63,12 @@ class ProductsController extends Controller
             'xomashyos' => $xomashyos,
         ]);
     }
-
-    /**
-     * Displays a single Products model.
-     * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionView($id)
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
     }
-
-    /**
-     * Creates a new Products model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
     public function actionCreate()
     {
         $model = new Products();
@@ -98,14 +85,6 @@ class ProductsController extends Controller
             'model' => $model,
         ]);
     }
-
-    /**
-     * Updates an existing Products model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
@@ -118,28 +97,12 @@ class ProductsController extends Controller
             'model' => $model,
         ]);
     }
-
-    /**
-     * Deletes an existing Products model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
-
-    /**
-     * Finds the Products model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Products the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     protected function findModel($id)
     {
         if (($model = Products::findOne(['id' => $id])) !== null) {
@@ -148,7 +111,6 @@ class ProductsController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
     public function actionSaveProduction()
     {
         $product_codes = $_POST['product_code'];
@@ -156,7 +118,7 @@ class ProductsController extends Controller
         $now = date('Y-m-d H:i:s');
         foreach ($product_codes as $product_code) {
             $product = Products::find()->where(['code' => $product_code])->one();
-            $expense_spr = ExpenseSpr::find()->where(['type' => 'xomashyo','code' => $product->expense_code])->one();
+            $expense_spr = ExpenseSpr::find()->where(['type' => 'xomashyo', 'code' => $product->expense_code])->one();
             $production = Productions::findOne($_POST['production_id'][$product_code]);
             $count = $_POST['count'][$product_code];
             $delete = false;
@@ -212,15 +174,14 @@ class ProductsController extends Controller
                     $k = 'all_product and production not have ' . $old_count;
                 }
             }
-            if($expense_spr){
+            if ($expense_spr) {
                 $new_count = $count;
                 $daily_material = DailyMaterials::find()->where(['expense_code' => $expense_spr->code, 'day' => $day])->one();
                 if ($daily_material) {
                     $old_count = $daily_material->count;
-                    if($new_count == 0){
+                    if ($new_count == 0) {
                         $daily_material->delete();
-                    }
-                    elseif ($old_count != $new_count) {
+                    } elseif ($old_count != $new_count) {
                         $daily_material->count = $new_count;
                         $daily_material->updated_at = $now;
                         $daily_material->save(false);
@@ -255,7 +216,6 @@ class ProductsController extends Controller
         }
         return $this->redirect(Yii::$app->request->referrer);
     }
-
     public function actionSaveSellings()
     {
         $day = $_POST['day'];
@@ -334,7 +294,6 @@ class ProductsController extends Controller
         }
         return $this->redirect(Yii::$app->request->referrer);
     }
-
     public function actionSaveExpenses()
     {
         // debug($_POST);
@@ -373,7 +332,7 @@ class ProductsController extends Controller
                     $expense->updated_at = $now;
                 }
                 $expense->save(false);
-                if($type == 'xomashyo'){
+                if ($type == 'xomashyo') {
                     $all_material = AllMaterials::find()->where(['expense_code' => $expense_code, 'day' => $day])->one();
                     if ($all_material) {
                         $new_all_count = $all_material->count + $old_count - $new_count;
@@ -466,7 +425,6 @@ class ProductsController extends Controller
         }
         return $this->redirect(Yii::$app->request->referrer);
     }
-
     public function actionSaveInvest()
     {
         $invest_sum = $_POST['invest'];
@@ -487,6 +445,48 @@ class ProductsController extends Controller
             $invest->comment = $comment;
             $invest->updated_at = $now;
             $invest->save(false);
+        }
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+    public function actionSaveMaterials()
+    {
+        $day = $_POST['day'];
+        $now = date('Y-m-d H:i:s');
+        $counts = $_POST['count'];
+        foreach ($counts as $expense_code => $new_count) {
+            $daily_material = DailyMaterials::find()->where(['expense_code' => $expense_code,'day' => $day])->one();
+            if($daily_material){
+                $old_count = $daily_material->count;
+                $daily_material->count = $new_count;
+                $daily_material->updated_at = $now;
+                $daily_material->save(false);
+            }
+            else{
+                $old_count = 0;
+                $daily_material = new DailyMaterials();
+                $daily_material->expense_code = $expense_code;
+                $daily_material->count = $new_count;
+                $daily_material->day = $day;
+                $daily_material->created_at = $now;
+                $daily_material->updated_at = $now;
+                $daily_material->save(false);
+            }
+            $all_material = AllMaterials::find()->where(['expense_code' => $expense_code,'day' => $day])->one();
+            if($all_material){
+                $all_new_count = $all_material->count + $old_count - $new_count;
+                $all_material->count = $all_new_count;
+                $all_material->updated_at = $now;
+                $all_material->save(false);
+            }
+            else{
+                $all_material = new AllMaterials();
+                $all_material->expense_code = $expense_code;
+                $all_material->count = $new_count;
+                $all_material->day = $day;
+                $all_material->created_at = $now;
+                $all_material->updated_at = $now;
+                $all_material->save(false);
+            }
         }
         return $this->redirect(Yii::$app->request->referrer);
     }

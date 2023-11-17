@@ -2,6 +2,7 @@
 
 namespace app\modules\milk\controllers;
 
+use app\modules\milk\models\AllMaterials;
 use app\modules\milk\models\AllProducts;
 use app\modules\milk\models\Days;
 use app\modules\milk\models\DaysSearch;
@@ -167,6 +168,23 @@ class DaysController extends Controller
                             $new_all_product->created_at = $now;
                             $new_all_product->updated_at = $now;
                             $new_all_product->save(false);
+                        }
+                    }
+                    $all_materials = AllMaterials::find()->where(['day' => $old_day])->all();
+                    foreach ($all_materials as $all_material) {
+                        $new_all_material = AllMaterials::find()->where(['expense_code' => $all_material->expense_code, 'day' => $new_day])->one();
+                        if ($new_all_material) {
+                            $new_all_material->count = $all_material->count;
+                            $new_all_material->updated_at = $now;
+                            $new_all_material->save(false);
+                        } else {
+                            $new_all_material = new AllMaterials();
+                            $new_all_material->expense_code = $all_material->expense_code;
+                            $new_all_material->count = $all_material->count;
+                            $new_all_material->day = $new_day;
+                            $new_all_material->created_at = $now;
+                            $new_all_material->updated_at = $now;
+                            $new_all_material->save(false);
                         }
                     }
                     $kassa = Kassa::find()->where(['day' => $old_day])->one();
