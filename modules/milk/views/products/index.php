@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter' => $xomashyos,
                     'contentOptions' => ['style' => 'width:25%;vertical-align: middle;'],
                     'value' => function ($data) use ($xomashyos) {
-                        return isset($xomashyos[$data->expense_code]) ? $xomashyos[$data->expense_code] : $data->expense_code;
+                        return strlen($data->expense_code)>0 ? (isset($xomashyos[$data->expense_code]) ? $xomashyos[$data->expense_code] : $data->expense_code) : "";
                     }
                 ],
                 [
