@@ -65,9 +65,9 @@ class ExpenseSprSearch extends ExpenseSpr
             'status' => $this->status,
         ]);
 
-        $query->andFilterWhere(['ilike', 'code', $this->code])
-            ->andFilterWhere(['ilike', 'type', $this->type])
-            ->andFilterWhere(['ilike', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'code', $this->code])
+            ->andFilterWhere(['like', 'type', $this->type])
+            ->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }

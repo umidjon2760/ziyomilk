@@ -67,8 +67,8 @@ class PricesSearch extends Prices
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['ilike', 'product_code', $this->product_code])
-            ->andFilterWhere(['ilike', 'photo', $this->photo]);
+        $query->andFilterWhere(['like', 'product_code', $this->product_code])
+            ->andFilterWhere(['like', 'photo', $this->photo]);
 
         return $dataProvider;
     }

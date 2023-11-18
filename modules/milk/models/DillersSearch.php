@@ -67,12 +67,12 @@ class DillersSearch extends Dillers
             'status' => $this->status,
         ]);
 
-        $query->andFilterWhere(['ilike', 'name', $this->name])
-            ->andFilterWhere(['ilike', 'address', $this->address])
-            ->andFilterWhere(['ilike', 'tg_address', $this->tg_address])
-            ->andFilterWhere(['ilike', 'car_number', $this->car_number])
-            ->andFilterWhere(['ilike', 'photo', $this->photo])
-            ->andFilterWhere(['ilike', 'car', $this->car]);
+        $query->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'address', $this->address])
+            ->andFilterWhere(['like', 'tg_address', $this->tg_address])
+            ->andFilterWhere(['like', 'car_number', $this->car_number])
+            ->andFilterWhere(['like', 'photo', $this->photo])
+            ->andFilterWhere(['like', 'car', $this->car]);
 
         return $dataProvider;
     }
