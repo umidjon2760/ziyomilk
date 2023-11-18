@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\milk\models\AllProducts;
 use app\modules\milk\models\Days;
 use app\modules\milk\models\Products;
 use yii\helpers\Html;
@@ -39,18 +40,26 @@ $this->params['breadcrumbs'][] = $this->title;
             $all = $buy_value - $return_value;
             $price = $product->price->price;
             $sum = $selling ? $selling->all_sum : 0;
+            if ($status) {
+                $all_products = AllProducts::find()->where(['product_code' => $product->code, 'day' => $day_model->day])->one();
+                $reason = $all_products && $all_products->count > 0 ? "" : "<br><i style='color:red;'>Bu mahsulot skladda mavjud emas!!!</i>";
+                $disabled = strlen($reason) > 5 ? "disabled" : "";
+            } else {
+                $reason = "";
+                $disabled = "";
+            }
             $str .= $status ? "<input type='hidden' name='product_code[]' value='" . $product->code . "' />" : "";
             $str .=  $status ? "<input type='hidden' name='selling_id[" . $product->code . "]' value='" . $selling_id . "' />" : "";
             $str .= $status ? "<input type='hidden' name='price[" . $product->code . "]' value='" . $price . "' />" : "";
             $str .= "<tr>";
             $str .= "<td style=width:3%;' class='hor-center ver-middle'>" . $n . "</td>";
-            $str .= "<td  class='ver-middle'>" . $product->name . "</td>";
+            $str .= "<td  class='ver-middle'>" . $product->name . $reason . "</td>";
             $str .= "<td style=width:10%;' class='hor-center ver-middle'>" . numberFormat($price, 0) . "</td>";
             $str .= "<td style=width:10%;' class='hor-center ver-middle'>";
-            $str .= $status ? "<input required value='" . $buy_value . "' name='buy[" . $product->code . "]' id='" . $product->code . "_" . $diller->id . "' type='number' step='0.1' min='0' class='form-control'/>" : $buy_value;
+            $str .= $status ? "<input required ".$disabled." value='" . $buy_value . "' name='buy[" . $product->code . "]' id='" . $product->code . "_" . $diller->id . "' type='number' step='0.1' min='0' class='form-control'/>" : $buy_value;
             $str .= "</td>";
             $str .= "<td style=width:10%;' class='hor-center ver-middle'>";
-            $str .= $status ? "<input required value='" . $return_value . "' name='return[" . $product->code . "]' type='number' step='0.1' min='0' class='form-control'/>" : $return_value;
+            $str .= $status ? "<input required ".$disabled." value='" . $return_value . "' name='return[" . $product->code . "]' type='number' step='0.1' min='0' class='form-control'/>" : $return_value;
             $str .= "</td>";
             $str .= "<td style=width:10%;' class='hor-center ver-middle'>" . $all . "</td>";
             $str .= "<td style=width:15%;' class='hor-center ver-middle'>" . numberFormat($sum, 0) . "</td>";

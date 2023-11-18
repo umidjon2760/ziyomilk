@@ -30,13 +30,17 @@ $status = $model->status;
                     'headerOptions' => [
                         'style' => 'width: 40%;',
                     ],
+                    'options' => [
+                        'required' => true
+                    ]
                 ],
                 [
                     'name'  => 'count',
                     'title' => 'Soni',
                     'defaultValue' => 0,
                     'options' => [
-                        'onkeyup' => 'calc_count(this)'
+                        'onkeyup' => 'calc_count(this)',
+                        'required' => true
                     ],
                     'type'  => 'textInput',
                 ],
@@ -45,7 +49,8 @@ $status = $model->status;
                     'defaultValue' => 0,
                     'title' => 'Narxi',
                     'options' => [
-                        'onkeyup' => 'calc_price(this)'
+                        'onkeyup' => 'calc_price(this)',
+                        'required' => true
                     ]
                 ],
                 [
@@ -60,13 +65,16 @@ $status = $model->status;
                         'style' => 'text-align:center;vertical-align:middle;'
                     ],
                     'value' => function ($data) {
-                        return numberFormat($data['calc'], 0);
+                        return isset($data['calc']) ? numberFormat($data['calc'], 0) : 0;
                     }
                 ],
                 [
                     'name'  => 'given_sum',
                     'defaultValue' => 0,
                     'title' => 'Berilgan summa',
+                    'options' => [
+                        'required' => true
+                    ]
                 ],
             ],
         ]) : "";

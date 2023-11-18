@@ -113,6 +113,9 @@ class ProductsController extends Controller
     }
     public function actionSaveProduction()
     {
+        if (!isset($_POST['product_code'])) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         $product_codes = $_POST['product_code'];
         $day = $_POST['day'];
         $now = date('Y-m-d H:i:s');
@@ -120,97 +123,101 @@ class ProductsController extends Controller
             $product = Products::find()->where(['code' => $product_code])->one();
             $expense_spr = ExpenseSpr::find()->where(['type' => 'xomashyo', 'code' => $product->expense_code])->one();
             $production = Productions::findOne($_POST['production_id'][$product_code]);
-            $count = $_POST['count'][$product_code];
-            $delete = false;
-            if ($production) {
-                $old_count = $production->count;
-                if ($count == 0) {
-                    $production->delete();
-                    $delete = true;
-                } else {
-                    $production->count = $count;
-                    $production->save(false);
-                }
-            } else {
-                $old_count = 0;
-                if ($count != 0) {
-                    $production = new Productions();
-                    $production->product_code = $product_code;
-                    $production->count = $count;
-                    $production->day = $day;
-                    $production->price = $_POST['price'][$product_code];
-                    $production->created_at = $now;
-                    $production->updated_at = $now;
-                    $production->save(false);
-                }
-            }
-            $all_product = AllProducts::find()->where(['product_code' => $product_code, 'day' => $day])->one();
-            if ($all_product) {
-                if (!$delete && $production) {
-                    $diff_count = $production->count - $old_count;
-                    $k = 'all_product and production have<br>production_count => ' . $production->count . '<br>diff =>' . $diff_count . "<br>old_count => " . $old_count;
-                    $all_product_count = $all_product->count + $diff_count;
-                    $all_product->count = $all_product_count;
-                    $all_product->updated_at = $now;
-                    $all_product->save(false);
-                } else {
-                    $k = 'all_product have ' . $old_count;
-                    $all_product_count = $all_product->count - $old_count;
-                    $all_product->count = $all_product_count;
-                    $all_product->updated_at = $now;
-                    $all_product->save(false);
-                }
-            } else {
-                if (!$delete) {
-                    $k = 'production have ' . $old_count;
-                    $all_product = new AllProducts();
-                    $all_product->product_code = $product_code;
-                    $all_product->count = $count;
-                    $all_product->day = $day;
-                    $all_product->created_at = $now;
-                    $all_product->updated_at = $now;
-                    $all_product->save(false);
-                } else {
-                    $k = 'all_product and production not have ' . $old_count;
-                }
-            }
-            if ($expense_spr) {
-                $new_count = $count;
-                $daily_material = DailyMaterials::find()->where(['expense_code' => $expense_spr->code, 'day' => $day])->one();
-                if ($daily_material) {
-                    $old_count = $daily_material->count;
-                    if ($new_count == 0) {
-                        $daily_material->delete();
-                    } elseif ($old_count != $new_count) {
-                        $daily_material->count = $new_count;
-                        $daily_material->updated_at = $now;
-                        $daily_material->save(false);
+            if (isset($_POST['count'][$product_code])) {
+                $count = $_POST['count'][$product_code];
+                $delete = false;
+                if ($production) {
+                    $old_count = $production->count;
+                    if ($count == 0) {
+                        $production->delete();
+                        $delete = true;
+                    } else {
+                        $production->count = $count;
+                        $production->save(false);
                     }
                 } else {
                     $old_count = 0;
-                    $daily_material = new DailyMaterials();
-                    $daily_material->expense_code = $expense_spr->code;
-                    $daily_material->count = $new_count;
-                    $daily_material->day = $day;
-                    $daily_material->created_at = $now;
-                    $daily_material->updated_at = $now;
-                    $daily_material->save(false);
+                    if ($count != 0) {
+                        $production = new Productions();
+                        $production->product_code = $product_code;
+                        $production->count = $count;
+                        $production->day = $day;
+                        $production->price = $_POST['price'][$product_code];
+                        $production->created_at = $now;
+                        $production->updated_at = $now;
+                        $production->save(false);
+                    }
                 }
-                $all_material = AllMaterials::find()->where(['expense_code' => $expense_spr->code, 'day' => $day])->one();
-                if ($all_material) {
-                    $new_all_count = $all_material->count + $old_count - $new_count;
-                    $all_material->count = $new_all_count;
-                    $all_material->updated_at = $now;
-                    $all_material->save(false);
+                $all_product = AllProducts::find()->where(['product_code' => $product_code, 'day' => $day])->one();
+                if ($all_product) {
+                    if (!$delete && $production) {
+                        $diff_count = $production->count - $old_count;
+                        $k = 'all_product and production have<br>production_count => ' . $production->count . '<br>diff =>' . $diff_count . "<br>old_count => " . $old_count;
+                        $all_product_count = $all_product->count + $diff_count;
+                        $all_product->count = $all_product_count;
+                        $all_product->updated_at = $now;
+                        $all_product->save(false);
+                    } else {
+                        $k = 'all_product have ' . $old_count;
+                        $all_product_count = $all_product->count - $old_count;
+                        $all_product->count = $all_product_count;
+                        $all_product->updated_at = $now;
+                        $all_product->save(false);
+                    }
                 } else {
-                    $all_material = new AllMaterials();
-                    $all_material->expense_code = $expense_spr->code;
-                    $all_material->count = $new_count;
-                    $all_material->day = $day;
-                    $all_material->created_at = $now;
-                    $all_material->updated_at = $now;
-                    $all_material->save(false);
+                    if (!$delete) {
+                        $k = 'production have ' . $old_count;
+                        $all_product = new AllProducts();
+                        $all_product->product_code = $product_code;
+                        $all_product->count = $count;
+                        $all_product->day = $day;
+                        $all_product->created_at = $now;
+                        $all_product->updated_at = $now;
+                        $all_product->save(false);
+                    } else {
+                        $k = 'all_product and production not have ' . $old_count;
+                    }
                 }
+                if ($expense_spr) {
+                    $new_count = $count;
+                    $daily_material = DailyMaterials::find()->where(['expense_code' => $expense_spr->code, 'day' => $day])->one();
+                    if ($daily_material) {
+                        $old_count = $daily_material->count;
+                        if ($new_count == 0) {
+                            $daily_material->delete();
+                        } elseif ($old_count != $new_count) {
+                            $daily_material->count = $new_count;
+                            $daily_material->updated_at = $now;
+                            $daily_material->save(false);
+                        }
+                    } else {
+                        $old_count = 0;
+                        $daily_material = new DailyMaterials();
+                        $daily_material->expense_code = $expense_spr->code;
+                        $daily_material->count = $new_count;
+                        $daily_material->day = $day;
+                        $daily_material->created_at = $now;
+                        $daily_material->updated_at = $now;
+                        $daily_material->save(false);
+                    }
+                    $all_material = AllMaterials::find()->where(['expense_code' => $expense_spr->code, 'day' => $day])->one();
+                    if ($all_material) {
+                        $new_all_count = $all_material->count + $old_count - $new_count;
+                        $all_material->count = $new_all_count;
+                        $all_material->updated_at = $now;
+                        $all_material->save(false);
+                    } else {
+                        $all_material = new AllMaterials();
+                        $all_material->expense_code = $expense_spr->code;
+                        $all_material->count = $new_count;
+                        $all_material->day = $day;
+                        $all_material->created_at = $now;
+                        $all_material->updated_at = $now;
+                        $all_material->save(false);
+                    }
+                }
+            } else {
+                continue;
             }
             // debug($k);
         }
@@ -220,6 +227,9 @@ class ProductsController extends Controller
     {
         $day = $_POST['day'];
         $now = date('Y-m-d H:i:s');
+        if (!isset($_POST['product_code'])) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         $product_codes = $_POST['product_code'];
         $diller_id = $_POST['diller_id'];
         $old_loan_sum = $_POST['old_loan_sum'];
@@ -227,48 +237,53 @@ class ProductsController extends Controller
         foreach ($product_codes as $product_code) {
             $selling_id = $_POST['selling_id'][$product_code];
             $price = $_POST['price'][$product_code];
-            $buy = $_POST['buy'][$product_code];
-            $return = $_POST['return'][$product_code];
-            $last_buy = $buy - $return;
-            $all_sum = $last_buy * $price;
-            $all_sum1 += $all_sum;
-            $selling = Sellings::find()->where(['id' => $selling_id])->one();
-            $all_product = AllProducts::find()->where(['product_code' => $product_code, 'day' => $day])->one();
-            if ($all_product) {
-                $diff = $all_product->count - $last_buy;
+            if (isset($_POST['buy'][$product_code])) {
+                $buy = $_POST['buy'][$product_code];
+                $return = $_POST['return'][$product_code];
+                $last_buy = $buy - $return;
+                $all_sum = $last_buy * $price;
+                $all_sum1 += $all_sum;
+                $selling = Sellings::find()->where(['id' => $selling_id])->one();
+                $all_product = AllProducts::find()->where(['product_code' => $product_code, 'day' => $day])->one();
+                if ($all_product) {
+                    $diff = $all_product->count - $last_buy;
+                    if ($selling) {
+                        $last_buy = $buy - $return;
+                        $last_selling_buy = $selling->buy - $selling->return;
+                        $dif_last_buy = $last_buy - $last_selling_buy;
+                        $diff = $all_product->count - $dif_last_buy;
+                        $all_product->count = $diff;
+                        $all_product->updated_at = $now;
+                    } else {
+                        $all_product->count = $diff;
+                        $all_product->updated_at = $now;
+                    }
+                    if ($diff < 0) {
+                        debug($product_code . " bazada yetarli emas!!!");
+                    }
+                    $all_product->save(false);
+                }
                 if ($selling) {
-                    $last_buy = $buy - $return;
-                    $last_selling_buy = $selling->buy - $selling->return;
-                    $dif_last_buy = $last_buy - $last_selling_buy;
-                    $diff = $all_product->count - $dif_last_buy;
-                    $all_product->count = $diff;
-                    $all_product->updated_at = $now;
+                    $selling->buy = $buy;
+                    $selling->return = $return;
+                    $selling->all_sum = $all_sum;
+                    $selling->updated_at = $now;
+                    $selling->save(false);
                 } else {
-                    $all_product->count = $diff;
-                    $all_product->updated_at = $now;
+                    $selling = new Sellings();
+                    $selling->diller_id = $diller_id;
+                    $selling->product_code = $product_code;
+                    $selling->day = $day;
+                    $selling->buy = $buy;
+                    $selling->return = $return;
+                    $selling->all_sum = $all_sum;
+                    $selling->created_at = $now;
+                    $selling->updated_at = $now;
+                    $selling->save(false);
                 }
-                if ($diff < 0) {
-                    debug($product_code . " bazada yetarli emas!!!");
-                }
-                $all_product->save(false);
             }
-            if ($selling) {
-                $selling->buy = $buy;
-                $selling->return = $return;
-                $selling->all_sum = $all_sum;
-                $selling->updated_at = $now;
-                $selling->save(false);
-            } else {
-                $selling = new Sellings();
-                $selling->diller_id = $diller_id;
-                $selling->product_code = $product_code;
-                $selling->day = $day;
-                $selling->buy = $buy;
-                $selling->return = $return;
-                $selling->all_sum = $all_sum;
-                $selling->created_at = $now;
-                $selling->updated_at = $now;
-                $selling->save(false);
+            else{
+                continue;
             }
         }
         $given_sum = $all_sum1 == 0 ? 0 : $_POST['given_sum'];
@@ -381,6 +396,9 @@ class ProductsController extends Controller
     {
         // debug($_POST);
         $day = $_POST['day'];
+        if (!isset($_POST['given_sum'])) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         $all = $_POST['given_sum'];
         $now = date('Y-m-d H:i:s');
         foreach ($all as $loan_id => $given_sum) {
@@ -407,6 +425,9 @@ class ProductsController extends Controller
     }
     public function actionSaveKassa()
     {
+        if (!isset($_POST['kassa'])) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         $kassa_sum = $_POST['kassa'];
         $now = date('Y-m-d H:i:s');
         $day = $_POST['day'];
@@ -427,6 +448,9 @@ class ProductsController extends Controller
     }
     public function actionSaveInvest()
     {
+        if (!isset($_POST['invest'])) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         $invest_sum = $_POST['invest'];
         $now = date('Y-m-d H:i:s');
         $day = $_POST['day'];
@@ -452,16 +476,18 @@ class ProductsController extends Controller
     {
         $day = $_POST['day'];
         $now = date('Y-m-d H:i:s');
+        if (!isset($_POST['count'])) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         $counts = $_POST['count'];
         foreach ($counts as $expense_code => $new_count) {
-            $daily_material = DailyMaterials::find()->where(['expense_code' => $expense_code,'day' => $day])->one();
-            if($daily_material){
+            $daily_material = DailyMaterials::find()->where(['expense_code' => $expense_code, 'day' => $day])->one();
+            if ($daily_material) {
                 $old_count = $daily_material->count;
                 $daily_material->count = $new_count;
                 $daily_material->updated_at = $now;
                 $daily_material->save(false);
-            }
-            else{
+            } else {
                 $old_count = 0;
                 $daily_material = new DailyMaterials();
                 $daily_material->expense_code = $expense_code;
@@ -471,14 +497,13 @@ class ProductsController extends Controller
                 $daily_material->updated_at = $now;
                 $daily_material->save(false);
             }
-            $all_material = AllMaterials::find()->where(['expense_code' => $expense_code,'day' => $day])->one();
-            if($all_material){
+            $all_material = AllMaterials::find()->where(['expense_code' => $expense_code, 'day' => $day])->one();
+            if ($all_material) {
                 $all_new_count = $all_material->count + $old_count - $new_count;
                 $all_material->count = $all_new_count;
                 $all_material->updated_at = $now;
                 $all_material->save(false);
-            }
-            else{
+            } else {
                 $all_material = new AllMaterials();
                 $all_material->expense_code = $expense_code;
                 $all_material->count = $new_count;
