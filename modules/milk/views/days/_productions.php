@@ -37,7 +37,14 @@ use yii\helpers\Html;
             if ($model->status) {
                 if (strlen($product->expense_code) > 0) {
                     $has_material_model = AllMaterials::find()->where(['expense_code' => $product->expense_code, 'day' => $model->day])->one();
-                    $has_material = $has_material_model && $has_material->count > 0 ? true : false;
+                    if($has_material_model){
+                        $has_material = $has_material_model->count > 0 ? true : false;
+                    }
+                    else{
+                        $has_material = false;
+                    }
+                    // $has_material = isset($has_material_model) && $has_material->count > 0 ? true : false;
+                    // $has_material = false;
                 } else {
                     $has_material = true;
                 }

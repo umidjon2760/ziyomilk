@@ -73,8 +73,8 @@ class DaysController extends Controller
     public function actionView($id, $type = 1)
     {
         $day = $this->findModel($id);
-        $products = Products::find()->where(['status' => true])->all();
-        $dillers = Dillers::find()->where(['status' => true])->all();
+        $products = Products::find()->where(['status' => true])->orderBy(['name' => SORT_ASC])->all();
+        $dillers = Dillers::find()->where(['status' => true])->orderBy(['name' => SORT_ASC])->all();
         $expense_spr = ArrayHelper::map(ExpenseSpr::getAll(), 'code', 'name');
         $data = [];
         $expenses = Expenses::find()->where(['day' => $day->day])->all();

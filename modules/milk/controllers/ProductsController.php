@@ -119,6 +119,10 @@ class ProductsController extends Controller
         $product_codes = $_POST['product_code'];
         $day = $_POST['day'];
         $now = date('Y-m-d H:i:s');
+        $old_count_suzma = 0;
+        $new_count_suzma = 0;
+        $old_count_qaymoq_qoldiq = 0;
+        $new_count_qaymoq_qoldiq = 0;
         foreach ($product_codes as $product_code) {
             $product = Products::find()->where(['code' => $product_code])->one();
             $expense_spr = ExpenseSpr::find()->where(['type' => 'xomashyo', 'code' => $product->expense_code])->one();
@@ -128,6 +132,14 @@ class ProductsController extends Controller
                 $delete = false;
                 if ($production) {
                     $old_count = $production->count;
+                    if ($product_code == 'suzma') {
+                        $old_count_suzma = $old_count;
+                        $new_count_suzma = $count;
+                    }
+                    if ($product_code == 'qaymoq_qoldiq') {
+                        $old_count_qaymoq_qoldiq = $old_count;
+                        $new_count_qaymoq_qoldiq = $count;
+                    }
                     if ($count == 0) {
                         $production->delete();
                         $delete = true;
@@ -137,6 +149,14 @@ class ProductsController extends Controller
                     }
                 } else {
                     $old_count = 0;
+                    if ($product_code == 'suzma') {
+                        $old_count_suzma = $old_count;
+                        $new_count_suzma = $count;
+                    }
+                    if ($product_code == 'qaymoq_qoldiq') {
+                        $old_count_qaymoq_qoldiq = $old_count;
+                        $new_count_qaymoq_qoldiq = $count;
+                    }
                     if ($count != 0) {
                         $production = new Productions();
                         $production->product_code = $product_code;
@@ -221,6 +241,46 @@ class ProductsController extends Controller
             }
             // debug($k);
         }
+        ////////// SUZMA SMETANA ////////////////////////////
+        $all_smetana_product = AllProducts::find()->where(['product_code' => 'smetana_20', 'day' => $day])->one();
+        if ($all_smetana_product) {
+            $new_smetana_count = $all_smetana_product->count + ($old_count_suzma * 13 / 10) - ($new_count_suzma * 13 / 10);
+            if ($new_smetana_count > 0) {
+                $all_smetana_product->count =  $new_smetana_count;
+                $all_smetana_product->save(false);
+            } else {
+                $suzma_product = Productions::find()->where(['product_code' => 'suzma', 'day' => $day])->one();
+                if ($suzma_product) {
+                    $suzma_product->delete();
+                }
+            }
+        } else {
+            $suzma_product = Productions::find()->where(['product_code' => 'suzma', 'day' => $day])->one();
+            if ($suzma_product) {
+                $suzma_product->delete();
+            }
+        }
+        ////////// SUZMA SMETANA ////////////////////////////
+        ////////// QAYMOQ QAYMOQ_QOLDIQ ////////////////////////////
+        $all_qaymoq_product = AllProducts::find()->where(['product_code' => 'qaymoq', 'day' => $day])->one();
+        if ($all_qaymoq_product) {
+            $new_qaymoq_count = $all_qaymoq_product->count + $old_count_qaymoq_qoldiq - $new_count_qaymoq_qoldiq ;
+            if ($new_qaymoq_count > 0) {
+                $all_qaymoq_product->count =  $new_qaymoq_count;
+                $all_qaymoq_product->save(false);
+            } else {
+                $qaymoq_qoldiq_product = Productions::find()->where(['product_code' => 'qaymoq_qoldiq', 'day' => $day])->one();
+                if ($qaymoq_qoldiq_product) {
+                    $qaymoq_qoldiq_product->delete();
+                }
+            }
+        } else {
+            $qaymoq_qoldiq_product = Productions::find()->where(['product_code' => 'qaymoq_qoldiq', 'day' => $day])->one();
+            if ($qaymoq_qoldiq_product) {
+                $qaymoq_qoldiq_product->delete();
+            }
+        }
+        ////////// QAYMOQ QAYMOQ_QOLDIQ ////////////////////////////
         return $this->redirect(Yii::$app->request->referrer);
     }
     public function actionSaveSellings()
@@ -281,8 +341,7 @@ class ProductsController extends Controller
                     $selling->updated_at = $now;
                     $selling->save(false);
                 }
-            }
-            else{
+            } else {
                 continue;
             }
         }

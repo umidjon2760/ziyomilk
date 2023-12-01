@@ -64,7 +64,7 @@ class Days extends \yii\db\ActiveRecord
      */
     public function getAllProducts()
     {
-        return $this->hasMany(AllProducts::class, ['day' => 'day']);
+        return $this->hasMany(AllProducts::class, ['day' => 'day'])->orderBy(['product_code' => SORT_ASC]);
     }
     public function getAllMaterials()
     {
@@ -73,7 +73,7 @@ class Days extends \yii\db\ActiveRecord
 
     public function getDailyMaterials()
     {
-        return $this->hasMany(DailyMaterials::class, ['day' => 'day']);
+        return $this->hasMany(DailyMaterials::class, ['day' => 'day'])->orderBy(['expense_code' => SORT_ASC]);
     }
 
     /**
@@ -93,7 +93,7 @@ class Days extends \yii\db\ActiveRecord
      */
     public function getExpenses()
     {
-        return $this->hasMany(Expenses::class, ['day' => 'day']);
+        return $this->hasMany(Expenses::class, ['day' => 'day'])->orderBy(['expense_code' => SORT_ASC]);
     }
 
     /**
@@ -113,7 +113,7 @@ class Days extends \yii\db\ActiveRecord
      */
     public function getProductions()
     {
-        return $this->hasMany(Productions::class, ['day' => 'day']);
+        return $this->hasMany(Productions::class, ['day' => 'day'])->orderBy(['product_code' => SORT_ASC]);
     }
 
     public function getKassa()
@@ -144,7 +144,7 @@ class Days extends \yii\db\ActiveRecord
     public function lastAllProduct()
     {
         $old_day = date('Y-m-d', strtotime('-1 days', strtotime($this->day)));
-        $model = AllProducts::find()->where(['day' => $old_day])->all();
+        $model = AllProducts::find()->where(['day' => $old_day])->orderBy(['expense_code' => SORT_ASC])->all();
         return $model;
     }
 

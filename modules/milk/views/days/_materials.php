@@ -18,9 +18,9 @@ $status = $model->status;
     </div>
     <div class="card-body">
         <?php
-        $products = Products::find()->select('expense_code')->where('length(expense_code)>0')->all();
+        $products = Products::find()->select('expense_code')->where('length(expense_code)>0')->orderBy(['name' => SORT_ASC])->all();
         $product_expensecodes = ArrayHelper::getColumn($products, 'expense_code');
-        $other_materials = ExpenseSpr::find()->where(['type' => 'xomashyo'])->andWhere(['not in', 'code', $product_expensecodes])->orderBy(['name' => SORT_ASC])->all();
+        $other_materials = ExpenseSpr::find()->where(['type' => 'xomashyo'])->andWhere(['not in', 'code', $product_expensecodes])->orderBy(['code' => SORT_ASC])->all();
         $daily_materials = $model->dailyMaterials;
         $t = 1;
         $all_sum = 0;
@@ -39,7 +39,7 @@ $status = $model->status;
         if($status){
             foreach ($other_materials as $other_material) {
                 $except_arr[] = $other_material->code;
-                $expense = Expenses::find()->where(['expense_code' => $other_material->code])->andWhere(['<=','day',$model->day])->orderBy(['created_at' => SORT_DESC])->one();
+                $expense = Expenses::find()->where(['expense_code' => $other_material->code])->andWhere(['<=','day',$model->day])->orderBy(['created_at' => SORT_ASC])->one();
                 if ($expense) {
                     $daily_material = DailyMaterials::find()->where(['day' => $model->day, 'expense_code' => $other_material->code])->one();
                     $price = $expense->sum;
@@ -112,7 +112,7 @@ $status = $model->status;
         $materials = $model->allMaterials;
         $all_sum = 0;
         foreach ($materials as $material) {
-            $price = $material->getExpense($model->day)->sum;
+            $price = $material->getExpense($model->day) ? $material->getExpense($model->day)->sum : 0;
             $sum = $material->count * $price;
             echo "<tr>";
             echo "<td class='hor-center ver-middle'>" . $t . "</td>";

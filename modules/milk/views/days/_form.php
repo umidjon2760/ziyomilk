@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
         'pluginOptions' => [
             'todayHighlight' => true,
             // 'type'=>DatePicker::TYPE_INLINE,
-            'daysOfWeekDisabled' => [0, 6],
+            // 'daysOfWeekDisabled' => [0, 6],
             // 'calendarWeeks'=>true,
             // 'todayBtn'=>true,
             'autoclose' => true,
