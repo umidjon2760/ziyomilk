@@ -112,7 +112,8 @@ $status = $model->status;
         $materials = $model->allMaterials;
         $all_sum = 0;
         foreach ($materials as $material) {
-            $price = $material->getExpense($model->day) ? $material->getExpense($model->day)->sum : 0;
+            $r = Expenses::find()->where(['expense_code' => $material->expense_code])->orderBy(['created_at' => SORT_DESC])->one();
+            $price = $material->getExpense($model->day) ? $material->getExpense($model->day)->sum : ($r ? $r->sum : 0);
             $sum = $material->count * $price;
             echo "<tr>";
             echo "<td class='hor-center ver-middle'>" . $t . "</td>";
