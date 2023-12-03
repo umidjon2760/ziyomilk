@@ -37,7 +37,7 @@ class ExpenseSpr extends \yii\db\ActiveRecord
             [['code'], 'unique'],
             [['status'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
-            [['code','type'], 'string', 'max' => 50],
+            [['code','type','product_code'], 'string', 'max' => 50],
             [['name'], 'string', 'max' => 255],
             [['code'], 'unique'],
         ];
@@ -53,6 +53,7 @@ class ExpenseSpr extends \yii\db\ActiveRecord
             'code' => 'Kodi',
             'name' => 'Nomi',
             'type' => 'Turi',
+            'product_code' => 'Maxsulot',
             'status' => 'Status',
             'created_at' => 'Yaratilgan vaqt',
             'updated_at' => 'O\'zgartirilgan vaqt',
@@ -71,17 +72,23 @@ class ExpenseSpr extends \yii\db\ActiveRecord
 
     public static function getAll()
     {
-        $model = ExpenseSpr::find()->where(['status' => true])->orderBy(['name' => SORT_ASC])->all();
+        $model = ExpenseSpr::find()->where(['status' => true])->orderBy(['type' => SORT_ASC])->all();
         return $model;
     }
 
     public static function getExpenseTypes(){
-        return ['xarajat' => 'Xarajat', 'xomashyo' => 'Xomashyo'];
+        return ['xarajat' => 'Xarajat', 'xomashyo' => 'Xomashyo','product' => 'Maxsulot'];
     }
 
     public static function getXomashyos(){
         $model = ExpenseSpr::find()->where(['status' => true,'type' => 'xomashyo'])->all();
         $items = ArrayHelper::map($model,'code','name');
+        return $items;
+    }
+
+    public static function getProductCodes(){
+        $model = ExpenseSpr::find()->select('product_code')->where(['status' => true,'type' => 'product'])->all();
+        $items = ArrayHelper::getColumn($model,'product_code');
         return $items;
     }
 }

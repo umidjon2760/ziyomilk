@@ -1,12 +1,14 @@
 <?php
 
 use app\modules\milk\models\ExpenseSpr;
+use app\modules\milk\models\Products;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 
 $types = ExpenseSpr::getExpenseTypes();
+$products = Products::getAll();
 
 /** @var yii\web\View $this */
 /** @var app\modules\milk\models\ExpenseSprSearch $searchModel */
@@ -38,12 +40,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'code',
                     'format' => 'raw',
-                    'contentOptions' => ['style' => 'width:20%;vertical-align: middle;'],
+                    'contentOptions' => ['style' => 'width:15%;vertical-align: middle;'],
                 ],
                 [
                     'attribute' => 'name',
                     'format' => 'raw',
-                    'contentOptions' => ['style' => 'width:43%;vertical-align: middle;'],
+                    'contentOptions' => ['style' => 'width:30%;vertical-align: middle;'],
                 ],
                 [
                     'attribute' => 'type',
@@ -52,6 +54,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width:5%;vertical-align: middle;text-align:center;'],
                     'value' => function ($data) use ($types) {
                         return isset($types[$data->type]) ? $types[$data->type] : $data->type;
+                    }
+                ],
+                [
+                    'attribute' => 'product_code',
+                    'format' => 'raw',
+                    'filter' => $products,
+                    'contentOptions' => ['style' => 'width:25%;vertical-align: middle;text-align:center;'],
+                    'value' => function ($data) use ($products) {
+                        return isset($products[$data->product_code]) ? $products[$data->product_code] : $data->product_code;
                     }
                 ],
                 [

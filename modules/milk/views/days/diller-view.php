@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php
         echo $status ? Html::beginForm(['/milk/products/save-sellings',], 'post',) : "";
         echo $status ? "<input type='hidden'name='day' class='form-control' value='" . $day_model->day . "' />" : "";
-        $products = Products::find()->where(['status' => true])->orderBy(['name' => SORT_ASC])->all();
+        $products = Products::find()->where(['status' => true])->orderBy(['ord' => SORT_ASC])->all();
         $str = "";
         $str .= $status ? "<input type='hidden' name='diller_id' value='" . $diller->id . "' />" : "";
         $str .= "<table class='table table-bordered'>";

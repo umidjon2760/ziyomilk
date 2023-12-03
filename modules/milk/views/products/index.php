@@ -42,16 +42,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'name',
                     'format' => 'raw',
-                    'contentOptions' => ['style' => 'width:25%;vertical-align: middle;'],
+                    'contentOptions' => ['style' => 'width:22%;vertical-align: middle;'],
                 ],
                 [
                     'attribute' => 'expense_code',
                     'format' => 'raw',
                     'filter' => $xomashyos,
-                    'contentOptions' => ['style' => 'width:25%;vertical-align: middle;'],
+                    'contentOptions' => ['style' => 'width:22%;vertical-align: middle;'],
                     'value' => function ($data) use ($xomashyos) {
                         return strlen($data->expense_code)>0 ? (isset($xomashyos[$data->expense_code]) ? $xomashyos[$data->expense_code] : $data->expense_code) : "";
                     }
+                ],
+                [
+                    'attribute' => 'ord',
+                    'format' => 'raw',
+                    'contentOptions' => ['style' => 'width:6%;vertical-align: middle;text-align:center;'],
                 ],
                 [
                     'attribute' => 'status',

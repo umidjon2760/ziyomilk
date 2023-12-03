@@ -17,6 +17,7 @@ class m231005_050804_create_products_table extends Migration
             'code' => $this->string(50)->unique()->notNull(),
             'name' => $this->string(255)->notNull(),
             'expense_code' => $this->string(50),
+            'ord' => $this->integer()->notNull(),
             'status' => $this->boolean()->defaultValue(true),
             'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime()

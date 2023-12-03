@@ -17,6 +17,7 @@ use app\modules\milk\models\Productions;
 use app\modules\milk\models\Products;
 use app\modules\milk\models\ProductsSearch;
 use app\modules\milk\models\Sellings;
+use app\modules\milk\models\Prices;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -56,6 +57,7 @@ class ProductsController extends Controller
     {
         $searchModel = new ProductsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider->query->orderBy(['ord' => SORT_ASC]);
         $xomashyos = ExpenseSpr::getXomashyos();
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -264,7 +266,7 @@ class ProductsController extends Controller
         ////////// QAYMOQ QAYMOQ_QOLDIQ ////////////////////////////
         $all_qaymoq_product = AllProducts::find()->where(['product_code' => 'qaymoq', 'day' => $day])->one();
         if ($all_qaymoq_product) {
-            $new_qaymoq_count = $all_qaymoq_product->count + $old_count_qaymoq_qoldiq - $new_count_qaymoq_qoldiq ;
+            $new_qaymoq_count = $all_qaymoq_product->count + $old_count_qaymoq_qoldiq - $new_count_qaymoq_qoldiq;
             if ($new_qaymoq_count > 0) {
                 $all_qaymoq_product->count =  $new_qaymoq_count;
                 $all_qaymoq_product->save(false);
@@ -388,11 +390,20 @@ class ProductsController extends Controller
                 $expense = Expenses::find()->where(['expense_code' => $expense_code, 'day' => $day])->one();
                 if ($expense) {
                     $old_count =  $expense->count;
-                    $expense->sum = $price;
-                    $expense->count = $new_count;
-                    $expense->all_sum = $all_sum;
-                    $expense->given_sum = $given_sum;
-                    $expense->updated_at = $now;
+                    if ($new_count == 0) {
+                        $sql_loans_calc = "delete from loans_calc lc where lc.loan_id in (select l.id from loans l where l.expense_id=".$expense->id.")";
+                        Yii::$app->db->createCommand($sql_loans_calc)->execute();
+                        $sql_loans = "delete from loans l where l.expense_id=".$expense->id;
+                        Yii::$app->db->createCommand($sql_loans)->execute();
+                        $expense->delete();
+                    } else {
+                        $expense->sum = $price;
+                        $expense->count = $new_count;
+                        $expense->all_sum = $all_sum;
+                        $expense->given_sum = $given_sum;
+                        $expense->updated_at = $now;
+                        $expense->save(false);
+                    }
                 } else {
                     $old_count = 0;
                     $expense = new Expenses();
@@ -404,12 +415,12 @@ class ProductsController extends Controller
                     $expense->given_sum = $given_sum;
                     $expense->created_at = $now;
                     $expense->updated_at = $now;
+                    $expense->save(false);
                 }
-                $expense->save(false);
                 if ($type == 'xomashyo') {
                     $all_material = AllMaterials::find()->where(['expense_code' => $expense_code, 'day' => $day])->one();
                     if ($all_material) {
-                        $new_all_count = $all_material->count + $old_count - $new_count;
+                        $new_all_count = $all_material->count - $old_count + $new_count;
                         $all_material->count = $new_all_count;
                         $all_material->updated_at = $now;
                         $all_material->save(false);
@@ -421,6 +432,46 @@ class ProductsController extends Controller
                         $all_material->created_at = $now;
                         $all_material->updated_at = $now;
                         $all_material->save(false);
+                    }
+                } elseif ($type == 'product') {
+                    $product_code = $expense_spr->product_code;
+                    $production = Productions::find()->where(['product_code' => $product_code, 'day' => $day])->one();
+                    if ($production) {
+                        if ($new_count == 0) {
+                            $production->delete();
+                        } else {
+                            $new_product_count = $production->count - $old_count + $new_count;
+                            $production->count = $new_product_count;
+                            $production->updated_at = $now;
+                            $production->save(false);
+                        }
+                    } else {
+                        $price_model = Prices::find()->where(['product_code' => $product_code, 'status' => true])->one();
+                        $price = $price_model ? $price_model->price : 0;
+                        $production = new Productions();
+                        $production->product_code = $product_code;
+                        $production->count = $new_count;
+                        $production->day = $day;
+                        $production->price = $price;
+                        $production->created_at = $now;
+                        $production->updated_at = $now;
+                        $production->save(false);
+                    }
+                    $all_product = AllProducts::find()->where(['product_code' => $product_code, 'day' => $day])->one();
+                    if($all_product){
+                        $new_all_product_count = $all_product->count - $old_count + $new_count;
+                        $all_product->count = $new_all_product_count;
+                        $all_product->updated_at = $now;
+                        $all_product->save(false);
+                    }
+                    else{
+                        $all_product = new AllProducts();
+                        $all_product->product_code = $product_code;
+                        $all_product->count = $new_count;
+                        $all_product->day = $day;
+                        $all_product->created_at = $now;
+                        $all_product->updated_at = $now;
+                        $all_product->save(false);
                     }
                 }
                 $loan = Loans::find()->where(['expense_id' => $expense->id])->one();

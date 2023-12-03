@@ -37,6 +37,7 @@ class Products extends \yii\db\ActiveRecord
         return [
             [['code', 'name'], 'required'],
             [['status'], 'boolean'],
+            [['ord'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['code','expense_code'], 'string', 'max' => 50],
             [['name'], 'string', 'max' => 255],
@@ -55,6 +56,7 @@ class Products extends \yii\db\ActiveRecord
             'name' => 'Nomi',
             'expense_code' => 'Xom ashyo',
             'status' => 'Status',
+            'ord' => 'Tartib',
             'created_at' => 'Yaratilgan vaqt',
             'updated_at' => 'O\'zgartirilgan vaqt',
         ];
@@ -67,7 +69,7 @@ class Products extends \yii\db\ActiveRecord
      */
     public function getAllProducts()
     {
-        return $this->hasMany(AllProducts::class, ['product_code' => 'code']);
+        return $this->hasMany(AllProducts::class, ['product_code' => 'code'])->orderBy(['products.ord' => SORT_ASC]);
     }
 
     /**
@@ -107,7 +109,7 @@ class Products extends \yii\db\ActiveRecord
 
     public static function getAll()
     {
-        $model = self::find()->where(['status' => true])->all();
+        $model = self::find()->where(['status' => true])->orderBy(['ord' => SORT_DESC])->all();
         $items = ArrayHelper::map($model, 'code', 'name');
         return $items;
     }

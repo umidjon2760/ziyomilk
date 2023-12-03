@@ -73,7 +73,7 @@ class DaysController extends Controller
     public function actionView($id, $type = 1)
     {
         $day = $this->findModel($id);
-        $products = Products::find()->where(['status' => true])->orderBy(['name' => SORT_ASC])->all();
+        $products = Products::find()->where(['status' => true])->orderBy(['ord' => SORT_ASC])->all();
         $dillers = Dillers::find()->where(['status' => true])->orderBy(['name' => SORT_ASC])->all();
         $expense_spr = ArrayHelper::map(ExpenseSpr::getAll(), 'code', 'name');
         $data = [];
@@ -269,7 +269,7 @@ class DaysController extends Controller
     public function actionGetModal()
     {
         $diller_id = $_POST['diller_id'];
-        $products = Products::find()->where(['status' => true])->all();
+        $products = Products::find()->where(['status' => true])->orderBy(['ord' => SORT_ASC])->all();
         $str = "";
         $str .= "<table class='table table-bordered'>";
         $str .= "<tr>";
@@ -372,13 +372,13 @@ class DaysController extends Controller
             $str .= "Barchasi to'g'ri, kunni yopishingiz mumkin.";
             $check = true;
         } elseif ($all_calc_sum < 0) {
-            $str .= "Qo'lingizda mavjud bo'lgan summadan '" . numberFormat($all_calc_sum,0) . "' so'm ko'p miqdorda harajat va qarzga ishlatgansiz, xarajat va qarzlaringizni qaytadan tekshiring!!!";
+            $str .= "Qo'lingizda mavjud bo'lgan summadan '" . numberFormat($all_calc_sum, 0) . "' so'm ko'p miqdorda harajat va qarzga ishlatgansiz, xarajat va qarzlaringizni qaytadan tekshiring!!!";
         } elseif ($all_calc_sum > $now_kassa) {
             $diff = $all_calc_sum - $now_kassa;
-            $str .= "Kassada <b>" . numberFormat($diff,0) . "</b> so'm pul kam!!!";
+            $str .= "Kassada <b>" . numberFormat($diff, 0) . "</b> so'm pul kam!!!";
         } elseif ($all_calc_sum < $now_kassa) {
             $diff = $now_kassa - $all_calc_sum;
-            $str .= "Kassada " . numberFormat($diff,0) . " so'm pul ko'p!!! Qayerdadir xato amaliyot bajargansiz, iltimos qaytadan tekshiring!!!";
+            $str .= "Kassada " . numberFormat($diff, 0) . " so'm pul ko'p!!! Qayerdadir xato amaliyot bajargansiz, iltimos qaytadan tekshiring!!!";
         } else {
             $str .= "Protsess xato!!!";
         }

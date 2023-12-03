@@ -41,7 +41,7 @@ class ExpenseSprController extends Controller
     {
         $searchModel = new ExpenseSprSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
+        $dataProvider->query->orderBy(['type' => SORT_ASC]);
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

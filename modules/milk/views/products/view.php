@@ -38,6 +38,7 @@ $xomashyos = ExpenseSpr::getXomashyos();
                         return isset($xomashyos[$data->expense_code]) ? $xomashyos[$data->expense_code] : $data->expense_code;
                     }
                 ],
+                'ord',
                 'status',
                 'created_at',
                 'updated_at',

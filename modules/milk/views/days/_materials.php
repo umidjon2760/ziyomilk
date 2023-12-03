@@ -18,7 +18,7 @@ $status = $model->status;
     </div>
     <div class="card-body">
         <?php
-        $products = Products::find()->select('expense_code')->where('length(expense_code)>0')->orderBy(['name' => SORT_ASC])->all();
+        $products = Products::find()->select('expense_code')->where('length(expense_code)>0')->orderBy(['ord' => SORT_ASC])->all();
         $product_expensecodes = ArrayHelper::getColumn($products, 'expense_code');
         $other_materials = ExpenseSpr::find()->where(['type' => 'xomashyo'])->andWhere(['not in', 'code', $product_expensecodes])->orderBy(['code' => SORT_ASC])->all();
         $daily_materials = $model->dailyMaterials;
@@ -49,10 +49,10 @@ $status = $model->status;
                 } else {
                     $price = 0;
                     $disabled = "disabled";
-                    $value = "Skladda mavjud emas";
+                    $value = "Mavjud emas";
                     $type = "type='text'";
                 }
-                if ($value != 'Skladda mavjud emas') {
+                if ($value != 'Mavjud emas') {
                     $sum = $value * $price;
                 } else {
                     $sum = 0;

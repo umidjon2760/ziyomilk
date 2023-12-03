@@ -28,6 +28,8 @@ $xomashyos = ExpenseSpr::getXomashyos();
         ],
     ]) ?>
 
+    <?= $form->field($model, 'ord')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'status')->checkbox(['checked' => $model ? $model->status : true]) ?>
 
     <?= $form->field($model, 'created_at')->textInput(['value' => ($model->created_at ? $model->created_at : date('Y-m-d H:i:s'))]) ?>

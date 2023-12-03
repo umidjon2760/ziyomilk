@@ -1,6 +1,7 @@
 <?php
 
 use app\modules\milk\models\ExpenseSpr;
+use app\modules\milk\models\Products;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -8,6 +9,7 @@ use yii\widgets\ActiveForm;
 /** @var app\modules\milk\models\Products $model */
 /** @var yii\widgets\ActiveForm $form */
 $types = ExpenseSpr::getExpenseTypes();
+$products = Products::getAll();
 ?>
 
 <div class="products-form">
@@ -18,7 +20,9 @@ $types = ExpenseSpr::getExpenseTypes();
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'type')->dropDownList($types) ?>
+    <?= $form->field($model, 'type')->dropDownList(['' => 'Tanlang...'] + $types) ?>
+
+    <?= $form->field($model, 'product_code')->dropDownList(['' => 'Tanlang...'] + $products) ?>
 
     <?= $form->field($model, 'status')->checkbox(['checked' => $model ? $model->status : true]) ?>
 

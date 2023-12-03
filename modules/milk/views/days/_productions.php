@@ -1,9 +1,10 @@
 <?php
 
 use app\modules\milk\models\AllMaterials;
+use app\modules\milk\models\ExpenseSpr;
 use yii\bootstrap4\Modal;
 use yii\helpers\Html;
-
+$expense_product_codes = ExpenseSpr::getProductCodes();
 ?>
 
 <div class="card" id="prductions">
@@ -50,6 +51,10 @@ use yii\helpers\Html;
                 }
                 $reason = $has_material ? "" : "<br><i style='color:red;'>(Bu mahsulot ishlab chiqarish uchun yetarli xomashyo mavjud emas!!!)</i>";
                 $disabled = $has_material ? "" : " disabled ";
+                if(in_array($product->code,$expense_product_codes)){
+                    $disabled = " disabled ";
+                    $reason =  "<br><i style='color:red;'>(Bu mahsulot xarajatdan keladi.)</i>";
+                }
             } else {
                 $reason = $production_value == 0 ? "<br><i style='color:red;'>(Yetarli xomashyo mavjud emasligi sababli mahsulot ishlab chiqarilmagan!!!)</i>" : 0;
                 $disabled = " disabled ";

@@ -17,7 +17,7 @@ class ProductsSearch extends Products
     public function rules()
     {
         return [
-            [['id'], 'integer'],
+            [['id','ord'], 'integer'],
             [['status'], 'boolean'],
             [['code', 'name','expense_code'], 'safe'],
         ];
@@ -60,6 +60,7 @@ class ProductsSearch extends Products
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'ord' => $this->ord,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
