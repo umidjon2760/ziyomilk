@@ -17,6 +17,7 @@ class m231005_061736_create_expense_spr_table extends Migration
             'code' => $this->string(50)->unique()->notNull(),
             'name' => $this->string(255)->notNull(),
             'type' => $this->string(50)->notNull()->defaultValue('xarajat'),
+            'product_code' => $this->string(50)->notNull(),
             'status' => $this->boolean()->defaultValue(true),
             'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime()
