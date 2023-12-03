@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\milk\models\AllMaterials;
 use app\modules\milk\models\DailyMaterials;
 use app\modules\milk\models\Expenses;
 use app\modules\milk\models\ExpenseSpr;
@@ -45,7 +46,9 @@ $status = $model->status;
                     $price = $expense->sum;
                     $disabled = "";
                     $value = $daily_material ?  $daily_material->count : 0;
-                    $type = "type='number' step='0.1' min='0'";
+                    $all_material = AllMaterials::find()->where(['expense_code'=>$other_material->code,'day' => $model->day])->one();
+                    $max = $all_material ? $all_material->count : 0;
+                    $type = "type='number' step='0.1' min='0' max='".$max."'";
                 } else {
                     $price = 0;
                     $disabled = "disabled";

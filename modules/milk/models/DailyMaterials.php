@@ -77,6 +77,11 @@ class DailyMaterials extends \yii\db\ActiveRecord
         return $this->hasOne(ExpenseSpr::class, ['code' => 'expense_code']);
     }
 
+    public function getExpenseCode()
+    {
+        return $this->hasOne(ExpenseSpr::class, ['code' => 'expense_code']);
+    }
+
     public function getExpense($day)
     {
         $model = Expenses::find()->where(['expense_code' => $this->expense_code,'day'=>$day])->one();
