@@ -64,7 +64,7 @@ class Days extends \yii\db\ActiveRecord
      */
     public function getAllProducts()
     {
-        return $this->hasMany(AllProducts::class, ['day' => 'day'])->orderBy(['product_code' => SORT_ASC]);
+        return $this->hasMany(AllProducts::class, ['day' => 'day'])->leftJoin('products','products.code=all_products.product_code')->orderBy(['products.ord' => SORT_ASC]);
     }
     public function getAllMaterials()
     {
